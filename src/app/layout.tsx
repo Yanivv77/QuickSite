@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
-import { categories } from "./data";
+import { ShopInventory } from "./data";
 import Link from "next/link";
+import { SearchDropdownComponent } from "@/components/search-dropdown";
 
 const helvetica = localFont({
   src: "./fonts/HelveticaNeueLTPro-Md.woff",
@@ -36,57 +35,32 @@ export default function RootLayout({
         className={`${helvetica.variable} ${helveticaRoman.variable} ${futura.variable} flex min-h-full flex-col antialiased`}
       >
         <div className="flex flex-grow flex-col">
-          <header className="font-futura flex items-center justify-between border-b-2 border-gray-300 p-4">
+          <header className="flex items-center justify-between border-b-2 border-gray-300 p-4 font-futura">
             <div className="flex items-center space-x-4">
-              <Link href="/" className="text-4xl font-bold text-black-800">
-                Quickbooks
+              <Link href="/" className="text-4xl font-bold text-zinc-950">
+                QuickBooks
               </Link>
             </div>
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                <Input
-                  placeholder="Search"
-                  className="w-[450px] font-sans font-medium"
-                />
-                <Search className="absolute right-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              </div>
+            <SearchDropdownComponent />
+            <div className="flex flex-row justify-between space-x-4">
               <Link
                 href="/order"
-                className="text-lg text-black-800 hover:underline"
+                className="text-lg text-zinc-950 hover:underline"
               >
                 ORDER
               </Link>
               <Link
                 href="/order-history"
-                className="text-lg text-black-800 hover:underline"
+                className="text-lg text-zinc-950 hover:underline"
               >
                 ORDER HISTORY
               </Link>
             </div>
           </header>
-          <div className="flex flex-grow font-helvetica-roman">
-            <aside className="hidden w-64 border-r border-gray-400 p-4 md:block">
-              <h2 className="border-b border-black-800 text-sm font-semibold text-black-900">
-                Choose a Category
-              </h2>
-              <ul className="">
-                {categories.map((category) => (
-                  <li key={category} className="group pb-2 hover:bg-gray-200">
-                    <a
-                      href="#"
-                      className="text-xs text-gray-800 group-hover:underline"
-                    >
-                      {category}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </aside>
-            <main className="flex-grow">{children}</main>
-          </div>
+          {children}
         </div>
-        <footer className="flex h-6 items-center justify-between border-t border-gray-400 px-4 font-helvetica text-[11px]">
-          <div className="space-x-1">
+        <footer className="flex h-auto flex-col items-center justify-between space-y-2 border-t border-gray-400 px-4 font-helvetica text-[11px] sm:h-6 sm:flex-row sm:space-y-0">
+          <div className="flex flex-wrap justify-center space-x-1 sm:justify-start">
             <span className="hover:bg-gray-100 hover:underline">Home</span>
             <span>|</span>
             <span className="hover:bg-gray-100 hover:underline">
@@ -111,9 +85,15 @@ export default function RootLayout({
               Settings
             </span>
           </div>
-          <div>
-            By using this website, you agree to our Terms and Conditions and
-            Privacy Policy
+          <div className="text-center sm:text-right">
+            By using this website, you agree to check out the{" "}
+            <Link
+              href="https://github.com/ethanniser/NextMaster"
+              className="font-bold hover:underline"
+              target="_blank"
+            >
+              Source Code
+            </Link>
           </div>
         </footer>
       </body>
