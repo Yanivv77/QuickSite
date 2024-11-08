@@ -1,116 +1,33 @@
-export const categories = [
-  "Fiction",
-  "Non-Fiction",
-  "Children's Books",
-  "Educational",
-  "Science",
-  "History",
-  "Biography & Memoir",
-  "Fantasy",
-  "Mystery & Thriller",
-  "Romance",
-  "Self-Help",
-  "Health & Wellness",
-  "Travel",
-  "Cooking",
-  "Art & Photography",
-  "Business & Economics",
-  "Technology",
-  "Religion & Spirituality",
-  "Poetry",
-  "Comics & Graphic Novels",
-  "Young Adult",
-  "Horror",
-  "Classic Literature",
-  "Short Stories",
-  "Drama",
-  "Adventure",
-];
-
-export const productCategories = [
-  {
-    name: "Fiction",
-    subcategories: [
-      { name: "Science Fiction", icon: "/placeholder.svg?height=50&width=50" },
-      { name: "Fantasy", icon: "/placeholder.svg?height=50&width=50" },
-      { name: "Mystery & Thriller", icon: "/placeholder.svg?height=50&width=50" },
-      { name: "Romance", icon: "/placeholder.svg?height=50&width=50" },
-      { name: "Horror", icon: "/placeholder.svg?height=50&width=50" },
-      { name: "Adventure", icon: "/placeholder.svg?height=50&width=50" },
-      { name: "Classic Literature", icon: "/placeholder.svg?height=50&width=50" },
-      { name: "Young Adult", icon: "/placeholder.svg?height=50&width=50" },
-      { name: "Drama", icon: "/placeholder.svg?height=50&width=50" },
-      { name: "Short Stories", icon: "/placeholder.svg?height=50&width=50" },
-    ],
-  },
-  {
-    name: "Non-Fiction",
-    subcategories: [
-      { name: "Biography & Memoir", icon: "/placeholder.svg?height=50&width=50" },
-      { name: "Self-Help", icon: "/placeholder.svg?height=50&width=50" },
-      { name: "Health & Wellness", icon: "/placeholder.svg?height=50&width=50" },
-      { name: "History", icon: "/placeholder.svg?height=50&width=50" },
-      { name: "Science", icon: "/placeholder.svg?height=50&width=50" },
-      { name: "Technology", icon: "/placeholder.svg?height=50&width=50" },
-      { name: "Business & Economics", icon: "/placeholder.svg?height=50&width=50" },
-      { name: "Travel", icon: "/placeholder.svg?height=50&width=50" },
-      { name: "Cooking", icon: "/placeholder.svg?height=50&width=50" },
-      { name: "Art & Photography", icon: "/placeholder.svg?height=50&width=50" },
-      { name: "Religion & Spirituality", icon: "/placeholder.svg?height=50&width=50" },
-      { name: "Poetry", icon: "/placeholder.svg?height=50&width=50" },
-      { name: "Comics & Graphic Novels", icon: "/placeholder.svg?height=50&width=50" },
-      { name: "Educational", icon: "/placeholder.svg?height=50&width=50" },
-      { name: "Other Non-Fiction", icon: "/placeholder.svg?height=50&width=50" },
-    ],
-  },
-  {
-    name: "Children's Books",
-    subcategories: [
-      { name: "Picture Books", icon: "/placeholder.svg?height=50&width=50" },
-      { name: "Early Readers", icon: "/placeholder.svg?height=50&width=50" },
-      { name: "Middle Grade", icon: "/placeholder.svg?height=50&width=50" },
-      { name: "Young Adult", icon: "/placeholder.svg?height=50&width=50" },
-      { name: "Educational", icon: "/placeholder.svg?height=50&width=50" },
-      { name: "Activity Books", icon: "/placeholder.svg?height=50&width=50" },
-    ],
-  },
-  // Add more main categories as needed
-];
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const bookGenresForArm = [
+const CategoriesForArm = [
   {
     name: "Fiction",
     categories: [
+      "Historical Fiction",
       "Science Fiction",
       "Fantasy",
-      "Mystery & Thriller",
+      "Mystery",
       "Romance",
-      "Horror",
-      "Adventure",
-      "Classic Literature",
-      "Young Adult",
-      "Drama",
+      "Thriller",
+      "Classics",
+      "Contemporary Fiction",
       "Short Stories",
+      "Young Adult",
     ],
   },
   {
     name: "Non-Fiction",
     categories: [
-      "Biography & Memoir",
+      "Biographies",
+      "Memoirs",
       "Self-Help",
-      "Health & Wellness",
       "History",
       "Science",
-      "Technology",
-      "Business & Economics",
+      "Philosophy",
+      "Psychology",
       "Travel",
-      "Cooking",
-      "Art & Photography",
-      "Religion & Spirituality",
-      "Poetry",
-      "Comics & Graphic Novels",
-      "Educational",
+      "Cookbooks",
+      "True Crime",
     ],
   },
   {
@@ -118,137 +35,140 @@ const bookGenresForArm = [
     categories: [
       "Picture Books",
       "Early Readers",
+      "Chapter Books",
       "Middle Grade",
       "Young Adult",
-      "Educational",
+      "Fairy Tales and Folklore",
+      "Educational Books",
       "Activity Books",
     ],
   },
-  // Add more genre groups as needed
+  {
+    name: "Academic and Reference",
+    categories: [
+      "Textbooks",
+      "Dictionaries",
+      "Encyclopedias",
+      "Atlases",
+      "Thesauruses",
+      "Research Journals",
+      "Manuals and Guides",
+    ],
+  },
+  {
+    name: "Arts and Crafts",
+    categories: [
+      "Drawing and Painting",
+      "Photography",
+      "Crafting",
+      "Fashion",
+      "Architecture",
+      "Interior Design",
+      "Music and Performing Arts",
+    ],
+  },
+  {
+    name: "Special Collections",
+    categories: [
+      "Rare Books",
+      "Signed Editions",
+      "First Editions",
+      "Limited Editions",
+      "Collector's Editions",
+      "Antique Books",
+      "Folio Society Books",
+    ],
+  },
+  {
+    name: "Miscellaneous",
+    categories: [
+      "Stationery",
+      "Bookmarks",
+      "Gift Cards",
+      "Book Lights",
+      "Reading Glasses",
+      "Notebooks and Journals",
+      "Book Stands",
+      "Book Storage Solutions",
+    ],
+  },
 ];
 
-export const books = [
+export const ShopInventory = [
   {
-    collectionName: "Bestsellers",
+    collectionName: "Fiction",
     categories: [
       {
-        categoryName: "Fiction",
+        categoryName: "Science Fiction",
+        icon: "/images/science-fiction-icon.png",
         categoryItems: [
           {
-            subCollectionName: "Recent Bestsellers",
+            subCollectionName: "Dystopian",
             subcategories: [
               {
-                name: "The Midnight Library",
+                subcategoryName: "Classic Dystopian",
                 products: [
                   {
-                    name: "The Midnight Library",
-                    author: "Matt Haig",
+                    name: "1984 by George Orwell",
                     description:
-                      "A novel about a library beyond the edge of the universe that contains books with different versions of your life.",
-                    price: 14.99,
+                      "A timeless dystopian novel depicting a totalitarian regime and loss of individual freedom.",
+                    price: 9.99,
                     highlights: [
-                      "Award-winning bestseller.",
-                      "Explores themes of regret and possibility.",
-                      "Engaging and thought-provoking narrative.",
+                      "Considered one of the greatest dystopian novels.",
+                      "Features iconic concepts like 'Big Brother' and 'thoughtcrime.'",
+                      "Compelling narrative with deep social commentary.",
                     ],
                   },
                   {
-                    name: "Where the Crawdads Sing",
-                    author: "Delia Owens",
+                    name: "Brave New World by Aldous Huxley",
                     description:
-                      "A mystery and coming-of-age story set in the marshes of North Carolina.",
-                    price: 12.99,
+                      "A thought-provoking novel about a futuristic society focused on technology and control.",
+                    price: 8.49,
                     highlights: [
-                      "Bestseller with a compelling storyline.",
-                      "Beautifully descriptive setting.",
-                      "Explores themes of isolation and resilience.",
+                      "Explores themes of technology, control, and human identity.",
+                      "Set in a utopian society with dark undertones.",
+                      "Timeless critique on societal norms and values.",
                     ],
                   },
-                  // Add more books as needed
+                  {
+                    name: "The Handmaid's Tale by Margaret Atwood",
+                    description:
+                      "A dystopian novel about a world where women's rights are restricted.",
+                    price: 10.99,
+                    highlights: [
+                      "Popular for its powerful, thought-provoking storyline.",
+                      "Explores themes of freedom and repression.",
+                      "Adapted into a successful TV series.",
+                    ],
+                  },
+                  {
+                    name: "Fahrenheit 451 by Ray Bradbury",
+                    description:
+                      "A chilling story about a future where books are banned and 'firemen' burn them.",
+                    price: 7.99,
+                    highlights: [
+                      "Explores the dangers of censorship and loss of knowledge.",
+                      "Fast-paced and impactful with a powerful message.",
+                      "Features a hero questioning societal norms.",
+                    ],
+                  },
+                  {
+                    name: "The Road by Cormac McCarthy",
+                    description:
+                      "A haunting novel about survival in a post-apocalyptic world.",
+                    price: 12.5,
+                    highlights: [
+                      "Poignant portrayal of survival and humanity.",
+                      "Pulitzer Prize-winning story.",
+                      "Features strong themes of resilience and hope.",
+                    ],
+                  },
                 ],
               },
-              // Add more subcollections if necessary
             ],
           },
         ],
       },
-      {
-        categoryName: "Non-Fiction",
-        categoryItems: [
-          {
-            subCollectionName: "Top Biographies",
-            subcategories: [
-              {
-                name: "Becoming",
-                products: [
-                  {
-                    name: "Becoming",
-                    author: "Michelle Obama",
-                    description:
-                      "An intimate, powerful, and inspiring memoir by the former First Lady of the United States.",
-                    price: 19.99,
-                    highlights: [
-                      "Inspiring personal journey.",
-                      "Insights into life in the White House.",
-                      "Engaging and heartfelt storytelling.",
-                    ],
-                  },
-                  {
-                    name: "Educated",
-                    author: "Tara Westover",
-                    description:
-                      "A memoir about a woman who grows up in a strict and abusive household in rural Idaho but eventually escapes to learn about the wider world through education.",
-                    price: 16.99,
-                    highlights: [
-                      "Powerful story of self-education.",
-                      "Themes of family and resilience.",
-                      "Critically acclaimed bestseller.",
-                    ],
-                  },
-                  // Add more books as needed
-                ],
-              },
-              // Add more subcollections if necessary
-            ],
-          },
-        ],
-      },
-      // Add more main categories and their collections as needed
     ],
   },
-  {
-    collectionName: "New Releases",
-    categories: [
-      {
-        categoryName: "Fiction",
-        categoryItems: [
-          {
-            subCollectionName: "Latest Thrillers",
-            subcategories: [
-              {
-                name: "The Silent Patient",
-                products: [
-                  {
-                    name: "The Silent Patient",
-                    author: "Alex Michaelides",
-                    description:
-                      "A psychological thriller about a woman's act of violence against her husband—and the therapist obsessed with uncovering her motive.",
-                    price: 13.99,
-                    highlights: [
-                      "Gripping psychological thriller.",
-                      "Unexpected twists and turns.",
-                      "Engaging and suspenseful narrative.",
-                    ],
-                  },
-                  // Add more books as needed
-                ],
-              },
-            ],
-          },
-        ],
-      },
-      // Add more categories and subcollections as needed
-    ],
-  },
-  // Add more collections like "Staff Picks", "Genre Highlights", etc.
 ];
