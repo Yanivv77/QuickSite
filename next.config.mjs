@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    ppr: true,
+  },
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -9,8 +12,10 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'placehold.co',
+        protocol: "https",
+        hostname: "ia3xwttgsoyoaa0n.public.blob.vercel-storage.com",
+        port: "",
+        pathname: "/**",
       },
     ],
   },
