@@ -82,6 +82,7 @@ export const products = pgTable(
     name: text("name").notNull(),
     description: text("description").notNull(),
     price: numeric("price").notNull(),
+    author: text("author").notNull(),
     subcategory_slug: text("subcategory_slug")
       .notNull()
       .references(() => subcategories.slug, { onDelete: "cascade" }),

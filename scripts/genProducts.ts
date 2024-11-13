@@ -1,234 +1,219 @@
-import { db } from "../src/db";
-import { Effect, Schedule, Console, Cause } from "effect";
-import {
-  products as products_table,
-  categories,
-  subcategories as subcategories_table,
-  subcategories,
-  products,
-  subcollections,
-} from "../src/db/schema";
-import { eq, sql, lt } from "drizzle-orm";
-import OpenAI from "openai";
-import { z } from "zod";
-import slugify from "slugify";
+// Importing Necessary Modules and Setting Up
+import OpenAI from 'openai';
+import { db } from '../src/db';
+import { products, subcategories } from '../src/db/schema';
+import fs from 'fs';
+import { isNull, eq } from 'drizzle-orm/expressions';
 
-const productValidator = z.object({
-  products: z.array(
-    z.object({
-      name: z.string(),
-      description: z.string(),
-      price: z.number(),
-    }),
-  ),
-});
+const openai = new OpenAI()
+const productSystemMessage = `
+You are given the name of a category of books in a book store.
+Your task is to generate 30 unique books that belong to this category, each with a funny, unique, and niche name. Make each book super specific.
+Ensure each product has a name, a brief description, and an author.
 
-const categoryValidator = z.object({
-  categories: z.array(
-    z.object({
-      name: z.string(),
-    }),
-  ),
-});
+OUTPUT ONLY IN JSON.
 
-const openai = new OpenAI();
+EXAMPLE:
 
-const makeProductPrompt = (categoryName: string) => `
-  You are given the name of a product category for products in an art supply store.
-  Your task is to generate 10 products. Each product has a name, description, and price.
+INPUT:
+Category Name: שירה רומנטית מהמאות ה-18
 
-  YOU MUST OUTPUT IN ONLY JSON.
+OUTPUT:
+{
+  "products": [
+    {
+      "name": "אמנות המשיכות הנועזות",
+      "description": "ספר מרתק על אהבה ותשוקה במאה ה-18",
+      "author": "סמנתה אינק",
+      "slug": "the-art-of-bold-attractions"
+    },
+    ... // 29 more products
+  ]
+}
 
-  EXAMPLE:
+REQUIREMENTS:
+1. Name and author must be in Hebrew
+2. Description must be in Hebrew
+3. Slug must be in English and be URL-friendly (only lowercase letters, numbers, and hyphens)
+4. ONLY RETURN VALID JSON with exactly 30 unique products
+5. Each product must have all fields filled
+`;
 
-  INPUT:
-  Category Name: Painting Supplies
+// Retrieving Subcategories Without Products
+const getSubcategoriesWithoutProducts = async () => {
+  const result = await db
+    .select({
+      slug: subcategories.slug,
+      name: subcategories.name,
+    })
+    .from(subcategories)
+    .leftJoin(products, eq(subcategories.slug, products.subcategory_slug))
+    .where(isNull(products.slug));
 
-  OUTPUT:
-  {
-    "products": [
-      {
-        "name": "Acrylic Paints (Basic and Professional Grades)",
-        "description": "High-quality, student-grade acrylic paint with smooth consistency.",
-        "price": 19.99,
-      }, 
-    ...
+  console.log(`Number of subcategories without products: ${result.length}`);
+  return result;
+};
+
+// Generating Batch Files with Limited Request Size
+const generateBatchFiles = async () => {
+  const subcatsWithoutProducts = await getSubcategoriesWithoutProducts();
+  const arr = subcatsWithoutProducts.slice(0, 100);
+
+  // Ensure the directory exists
+  if (!fs.existsSync('scripts')) {
+    fs.mkdirSync('scripts');
   }
 
-  NOW YOUR TURN,
+  arr.forEach((subcat) => {
+    const custom_id = subcat.slug;
+    const method = "POST";
+    const url = "/v1/chat/completions";
+    const body = {
+      model: "gpt-4o-mini",
+      messages: [
+        { role: "system", content: productSystemMessage },
+        { role: "user", content: `Category name: ${subcat.name}` },
+      ],
+    };
 
-  INPUT:
-  Category Name: ${categoryName}
+    const line = `{"custom_id": "${custom_id}", "method": "${method}", "url": "${url}", "body": ${JSON.stringify(body)}}`;
 
-  OUTPUT:`;
+    fs.appendFile("scripts/req.jsonl", line + "\n", (err: any) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+    });
+  });
+  console.log(`Generated batch file with ${arr.length} requests`);
+};
 
-const makeCategoryPrompt = (categoryName: string) => `
-  You are given the name of a product category for products in an art supply store.
-  Your task is to generate 10 sub-categories. Each sub-category has a name.
+const uploadAndCreateBatch = async () => {
+  try {
+    const uploadedFile = await openai.files.create({
+      file: fs.createReadStream("scripts/req.jsonl"),
+      purpose: "batch",
+    });
+    console.log(`Uploaded file: ${uploadedFile.id}`);
 
-  YOU MUST OUTPUT IN ONLY JSON.
+    const batch = await openai.batches.create({
+      input_file_id: uploadedFile.id,
+      endpoint: "/v1/chat/completions",
+      completion_window: "24h",
+    });
+    console.log(`Created batch: ${batch.id}`);
 
-  EXAMPLE:
-
-  INPUT:
-  Category Name: Sketching Pencils
-
-  OUTPUT:
-  {
-    "categories": [
-      {
-        "name": "Colored Pencils",
-      }, 
-      {
-        "name": "Charcoal Pencils",
-      }, 
-    ...
+  } catch (error) {
+    console.error(`Error processing batch:`, error);
   }
+};
 
-  NOW YOUR TURN,
+const checkBatchStatus = async () => {
+  const batch = await openai.batches.retrieve("batch_6734e8cb34388190be9f303a7ccc36fe");
+  console.log(batch);
+  
+};
 
-  INPUT:
-  Category Name: ${categoryName}
+const downloadBatchResults = async () => {
+  try {
+    // Download successful results
+    const outputFileResponse = await openai.files.content("file-iS4v2xnvoYfJYnS5A6rSVHPa");
+    const outputContents = await outputFileResponse.text();
+    fs.writeFileSync("scripts/successful_results.jsonl", outputContents);
+    console.log("Successfully downloaded results");
 
-  OUTPUT:`;
+    // Download error file
+    const errorFileResponse = await openai.files.content("file-wWClUyKMXdHKaLcvj4QuLvYP");
+    const errorContents = await errorFileResponse.text();
+    fs.writeFileSync("scripts/failed_results.jsonl", errorContents);
+    console.log("Successfully downloaded error file");
+  } catch (error) {
+    console.error("Error downloading batch results:", error);
+  }
+};
 
-const main = Effect.gen(function* () {
-  // find subcollections with less than 5 subcategories
-  // const subcollectionsWithLessThan5Subcategories = yield* Effect.tryPromise(
-  //   () =>
-  //     db
-  //       .select({
-  //         subcollectionId: subcollection.id,
-  //         subcollectionName: subcollection.name,
-  //         subcategoryCount: sql<number>`COUNT(${subcategories.slug})`,
-  //       })
-  //       .from(subcollection)
-  //       .leftJoin(
-  //         subcategories,
-  //         eq(subcollection.id, subcategories.subcollection_id),
-  //       )
-  //       .groupBy(subcollection.id, subcollection.name)
-  //       .having(eq(sql<number>`COUNT(${subcategories.slug})`, 0)),
-  // );
-  // console.log(
-  //   `found ${subcollectionsWithLessThan5Subcategories.length} subcollections with no subcategories`,
-  // );
-  // let counter1 = 0;
-  // yield* Effect.all(
-  //   subcollectionsWithLessThan5Subcategories.map((coll) =>
-  //     Effect.gen(function* () {
-  //       console.log(
-  //         `starting ${counter1++} of ${subcollectionsWithLessThan5Subcategories.length}`,
-  //       );
-  //       console.log("starting", coll.subcollectionName);
-  //       const res = yield* Effect.tryPromise(() =>
-  //         openai.chat.completions.create({
-  //           model: "gpt-3.5-turbo",
-  //           messages: [
-  //             {
-  //               role: "user",
-  //               content: makeCategoryPrompt(coll.subcollectionName),
-  //             },
-  //           ],
-  //         }),
-  //       ).pipe(Effect.tapErrorCause((e) => Console.error("hi", e)));
-  //       const text = res.choices[0].message.content;
-  //       if (!text) {
-  //         return yield* Effect.fail("no json");
-  //       }
-  //       const json = yield* Effect.try(() => JSON.parse(text));
-  //       const res2 = categoryValidator.safeParse(json);
-  //       if (!res2.success) {
-  //         return yield* Effect.fail("invalid json");
-  //       }
-  //       yield* Effect.all(
-  //         res2.data.categories
-  //           .map(
-  //             (category) =>
-  //               ({
-  //                 ...category,
-  //                 slug: slugify(category.name),
-  //                 subcollection_id: coll.subcollectionId,
-  //               }) as const,
-  //           )
-  //           .map((x) =>
-  //             Effect.tryPromise(() => db.insert(subcategories).values(x)).pipe(
-  //               Effect.catchAll((e) => Effect.void),
-  //             ),
-  //           ),
-  //       );
-  //       console.log("data inserted");
-  //     }),
-  //   ),
-  //   { mode: "either", concurrency: 4 },
-  // );
-  // // find subcategories withless than 5 products
-  const subcategoriesWithLessThan5Products = yield* Effect.tryPromise(() =>
-    db
-      .select({
-        subcategorySlug: subcategories.slug,
-        subcategoryName: subcategories.name,
-        productCount: sql<number>`COUNT(${products.slug})`,
-      })
-      .from(subcategories)
-      .leftJoin(products, eq(subcategories.slug, products.subcategory_slug))
-      .groupBy(subcategories.slug, subcategories.name)
-      .having(eq(sql<number>`COUNT(${products.slug})`, 0)),
-  );
-  console.log(
-    `found ${subcategoriesWithLessThan5Products.length} subcategories with no products`,
-  );
-  let counter2 = 0;
-  yield* Effect.all(
-    subcategoriesWithLessThan5Products.map((cat) =>
-      Effect.gen(function* () {
-        console.log(
-          `starting ${counter2++} of ${subcategoriesWithLessThan5Products.length}`,
-        );
-        console.log("starting", cat.subcategoryName);
-        const res = yield* Effect.tryPromise(() =>
-          openai.chat.completions.create({
-            model: "gpt-3.5-turbo",
-            messages: [
-              {
-                role: "user",
-                content: makeProductPrompt(cat.subcategoryName),
-              },
-            ],
-          }),
-        );
-        const json = res.choices[0].message.content;
-        if (!json) {
-          return yield* Effect.fail("no json");
-        }
-        const res2 = productValidator.safeParse(JSON.parse(json));
-        if (!res2.success) {
-          return yield* Effect.fail("invalid json");
-        }
-        yield* Effect.all(
-          res2.data.products
-            .map((product) => ({
-              ...product,
-              price: product.price.toString(),
-              subcategory_slug: cat.subcategorySlug,
-              slug: slugify(product.name),
-            }))
-            .map((x) =>
-              Effect.tryPromise(() => db.insert(products).values(x)).pipe(
-                Effect.catchAll((e) => Effect.void),
-              ),
-            ),
-          {
-            concurrency: 5,
-          },
-        );
-      }),
-    ),
-    { concurrency: 3 },
-  );
-});
+// Monitoring Batch Progress
+const monitorBatch = async (batchId: string) => {
+  try {
+    let isCompleted = false;
 
-const exit = await Effect.runPromiseExit(
-  main.pipe(Effect.retry({ schedule: Schedule.spaced("1 seconds") })),
-);
-console.log(exit.toString());
+    while (!isCompleted) {
+      const status = await openai.batches.retrieve(batchId);
+      console.log(`
+        Batch ID: ${batchId}
+        Status: ${status.status}
+        Requests - Total: ${status.request_counts?.total ?? 0}, Completed: ${status.request_counts?.completed ?? 0}, Failed: ${status.request_counts?.failed ?? 0}
+        Errors: ${JSON.stringify(status.errors)}
+        Time: ${new Date().toISOString()}
+      `);
+
+      if (status.status === 'completed' || status.status === 'failed') {
+        isCompleted = true;
+        console.log('Final status:', status);
+      } else {
+        // Wait before checking again to avoid hitting rate limits
+        await new Promise((resolve) => setTimeout(resolve, 20000)); // Wait 60 seconds
+      }
+    }
+  } catch (error) {
+    console.error(`Error monitoring batch ${batchId}:`, error);
+  }
+};
+
+const cancelBatch = async (batchId: string) => {
+  try {
+    const canceledBatch = await openai.batches.cancel(batchId);
+    console.log(`Batch ${batchId} cancelled successfully:`, canceledBatch.status);
+  } catch (error) {
+    console.error(`Error cancelling batch ${batchId}:`, error);
+  }
+};
+
+const cancelAllBatches = async () => {
+  try {
+    // List all batches
+    const batches = await openai.batches.list();
+    
+    // Cancel each active batch
+    for (const batch of batches.data) {
+      if (batch.status === 'in_progress' || batch.status === 'validating') {
+        console.log(`Cancelling batch ${batch.id}...`);
+        await cancelBatch(batch.id);
+      }
+    }
+    console.log('All active batches have been cancelled.');
+  } catch (error) {
+    console.error('Error cancelling batches:', error);
+  }
+};
+
+// Orchestrating the Entire Process
+const main = async () => {
+  try {
+    console.log('Starting product generation process...');
+    
+    // Step 1: Generate batch files
+    await generateBatchFiles();
+
+    // Step 2: Upload files and create batches
+    // await uploadAndCreateBatch();
+
+    // Step 3: Download batch results after all batches are processed and append to one file
+    // await downloadBatchResults();
+
+    //  Check batch status
+    // await checkBatchStatus();
+
+    // Cancel batch
+    // await cancelBatch("batch_6730e5c5e2508190a198997f7f15ed2b");
+
+    // Cancel all batches
+    // await cancelAllBatches();
+
+    console.log('All processes completed successfully.');
+  } catch (error) {
+    console.error('An error occurred during processing:', error);
+  }
+};
+
+main();
