@@ -3,14 +3,13 @@ import slugify from "slugify";
 import { db } from "../src/db";
 import {
   categories,
-  collections,
   subcategories,
   subcollections,
 } from "../src/db/schema";
-import { eq, isNull } from "drizzle-orm";
 import { generateObject } from "ai";
 import { createOpenAI } from "@ai-sdk/openai";
 import { z } from "zod";
+import { getCategories, getCollections, getSubcollections } from "@/db/scripts_utils";
 const fs = require("fs");
 
 const openai = new OpenAI()
@@ -18,7 +17,7 @@ const client = createOpenAI();
 
 const system = `
 You are given the name of a collection for products in a book store.
-Your task is to generate 10 unique, broad categories relevant to this collection, focusing on common genres, topics, and themes.
+Your task is to generate 6 unique, broad categories relevant to this collection, focusing on common genres, topics, and themes.
 
 OUTPUT ONLY IN JSON.
 
@@ -43,17 +42,12 @@ OUTPUT:
   ]
 }
 
-REMEMBER: ONLY RETURN THE JSON output with 10 unique categories. The categories must be appropriate for a book store, covering a variety of reader interests.
+REMEMBER: ONLY RETURN THE JSON output with 6 unique categories. The categories must be appropriate for a book store, covering a variety of reader interests.
 name (in Hebrew)
 `; 
 
 
 
-const getCollections = async () => {
-  return await db.select().from(collections);
-};
-
-// generate 20 categories per each collection
 const generateCategories = async () => {
   const data = [] as any;
   const c = await getCollections();
@@ -87,18 +81,12 @@ const generateCategories = async () => {
   await db.insert(categories).values(data).onConflictDoNothing();
 };
 
-// generateCategories();
 
-const getCategories = async () => {
-  return await db.select().from(categories);
-};
-
-// generate 10 subcollections per each category
 const generateSubCollections = async () => {
   const data = [] as any;
   const c = await getCategories();
 
-  const promises = c.map(async (cat) => {
+  const promises = c.map(async (cat: any) => {
     const { object } = await generateObject({
       model: client.languageModel("gpt-4o-mini", { structuredOutputs: true }),
       schema: z.object({
@@ -139,22 +127,6 @@ const generateSubCollections = async () => {
   await db.insert(subcollections).values(data).onConflictDoNothing();
 };
 
-// generateSubCollections();
-
-const getSubcollections = async () => {
-  // only get subcollections that have no subcategories
-  const result = await db
-    .select()
-    .from(subcollections)
-    .leftJoin(
-      subcategories,
-      eq(subcollections.id, subcategories.subcollection_id),
-    )
-    .where(isNull(subcategories.subcollection_id))
-  console.log(result.length);
-  return result;
-};
-
 const generateSubcategories = async () => {
   const data = [] as any[];
   const allSubcollections = await getSubcollections();
@@ -165,7 +137,7 @@ const generateSubcategories = async () => {
   );
   console.log(`Total subcollections after flattening: ${subcollections.length}`);
 
-  const batchSize = 10; // Adjust based on your API's rate limits
+  const batchSize = 10; 
   for (let i = 0; i < subcollections.length; i += batchSize) {
     const batch = subcollections.slice(i, i + batchSize);
 
@@ -184,19 +156,19 @@ const generateSubcategories = async () => {
               })),
             }),
             system: `You are given the name of a subcollection in a book store.
-                      Generate exactly 15 super specific and niche unique and funny subcategories within this subcollection, which represent specific types, themes, or formats commonly found under this subcollection. Make them super specific and niche, including different countries, time periods, and events.
+                      Generate exactly 5 super specific and niche unique and funny subcategories within this subcollection, which represent specific types, themes, or formats commonly found under this subcollection. Make them super specific and niche, including different countries, time periods, and events.
 
                       OUTPUT ONLY IN JSON.
 
-                      REMEMBER: ONLY RETURN JSON with exactly 15 unique subcategories. Names must fit within the scope of the subcollection and be relevant to a book store.
+                      REMEMBER: ONLY RETURN JSON with exactly 5 unique subcategories. Names must fit within the scope of the subcollection and be relevant to a book store.
                       Each subcategory must include: name (in Hebrew), slug (in English)
                       `,
             prompt: `Subcollection Name: ${subcol.name}`,
           });
 
           const sc = object.subcategories;
-          if (!sc || sc.length !== 15) {
-            throw new Error(`Expected 15 subcategories, got ${sc ? sc.length : 0}`);
+          if (!sc || sc.length !== 5) {
+            throw new Error(`Expected 5 subcategories, got ${sc ? sc.length : 0}`);
           }
 
           console.log(`Subcategories generated for "${subcol.name}": ${sc.length}`);
@@ -230,14 +202,16 @@ const generateSubcategories = async () => {
 
     // Wait before processing the next batch to respect rate limits
     console.log(`Processed batch ${i / batchSize + 1}. Waiting before next batch...`);
-    await new Promise(resolve => setTimeout(resolve, 30000)); // Wait 30 seconds
+    await new Promise(resolve => setTimeout(resolve, 5000)); 
   }
 
   console.log('All subcollections have been processed.');
 };
 
-getSubcollections();
-generateSubcategories();
+
+// generateCategories();
+// generateSubCollections();
+// generateSubcategories();
 
 
 

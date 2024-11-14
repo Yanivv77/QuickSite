@@ -8,7 +8,7 @@ import { isNull, eq } from 'drizzle-orm/expressions';
 const openai = new OpenAI()
 const productSystemMessage = `
 You are given the name of a category of books in a book store.
-Your task is to generate 30 unique books that belong to this category, each with a funny, unique, and niche name. Make each book super specific.
+Your task is to generate 8 unique books that belong to this category, each with a funny, unique, and niche name. Make each book super specific.
 Ensure each product has a name, a brief description, and an author.
 
 OUTPUT ONLY IN JSON.
@@ -27,7 +27,7 @@ OUTPUT:
       "author": "סמנתה אינק",
       "slug": "the-art-of-bold-attractions"
     },
-    ... // 29 more products
+    ... // 7 more products
   ]
 }
 
@@ -35,7 +35,7 @@ REQUIREMENTS:
 1. Name and author must be in Hebrew
 2. Description must be in Hebrew
 3. Slug must be in English and be URL-friendly (only lowercase letters, numbers, and hyphens)
-4. ONLY RETURN VALID JSON with exactly 30 unique products
+4. ONLY RETURN VALID JSON with exactly 8 unique products
 5. Each product must have all fields filled
 `;
 
@@ -56,8 +56,7 @@ const getSubcategoriesWithoutProducts = async () => {
 
 // Generating Batch Files with Limited Request Size
 const generateBatchFiles = async () => {
-  const subcatsWithoutProducts = await getSubcategoriesWithoutProducts();
-  const arr = subcatsWithoutProducts.slice(0, 100);
+  const arr = await getSubcategoriesWithoutProducts();
 
   // Ensure the directory exists
   if (!fs.existsSync('scripts')) {
@@ -74,8 +73,10 @@ const generateBatchFiles = async () => {
         { role: "system", content: productSystemMessage },
         { role: "user", content: `Category name: ${subcat.name}` },
       ],
+      temperature: 0.8,
     };
 
+ 
     const line = `{"custom_id": "${custom_id}", "method": "${method}", "url": "${url}", "body": ${JSON.stringify(body)}}`;
 
     fs.appendFile("scripts/req.jsonl", line + "\n", (err: any) => {

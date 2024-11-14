@@ -2,7 +2,7 @@ import slugify from "slugify";
 import { products, subcategories } from "../src/db/schema";
 import { db } from "../src/db";
 import { eq, isNull } from "drizzle-orm";
-import JSON5 from 'json5';
+
 
 const readline = require("readline");
 const fs = require("fs");
@@ -35,7 +35,7 @@ function getRandomObjects(arr: any[], count: number) {
 }
 
 const getBody = async () => {
-  const fileStream = fs.createReadStream("scripts/out.jsonl");
+  const fileStream = fs.createReadStream("scripts/output.jsonl");
   const rl = readline.createInterface({
     input: fileStream,
   });
@@ -58,14 +58,15 @@ const getBody = async () => {
         console.log("Products:", products);
 
         const productsToAdd = products.map(
-          (product: { name: string; description: string }) => {
+          (product: { name: string; description: string; author: string; slug: string }) => {
             const price = parseFloat((Math.random() * 20 + 5).toFixed(1));
             return {
-              slug: slugify(product.name, { lower: true }),
+              slug: product.slug,
               name: product.name,
               description: product.description ?? "",
               price,
               subcategory_slug,
+              author: product.author,
             };
           },
         );
@@ -98,6 +99,7 @@ const getBody = async () => {
             ...product,
             subcategory_slug: subcat,
             slug: slugify(product.name, { lower: true }) + "-1",
+            author: "system",
           }));
           additionalData.push(...randomProducts);
         });

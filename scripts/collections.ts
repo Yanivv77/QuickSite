@@ -11,14 +11,6 @@ export const collectionsData = [
   { id: 10, name: 'רומנטיקה', slug: 'romance' },
   { id: 11, name: 'עצמאות', slug: 'self-help' },
   { id: 12, name: 'בריאות ורווחה', slug: 'health-wellness' },
-  { id: 13, name: 'נסיעות', slug: 'travel' },
-  { id: 14, name: 'בישול', slug: 'cooking' },
-  { id: 15, name: 'אמנות וצילום', slug: 'art-photography' },
-  { id: 16, name: 'עסקים וכלכלה', slug: 'business-economics' },
-  { id: 17, name: 'טכנולוגיה', slug: 'technology' },
-  { id: 18, name: 'דת ורוחניות', slug: 'religion-spirituality' },
-  { id: 19, name: 'שירה', slug: 'poetry' },
-  { id: 20, name: 'קומיקס וגרפיקה', slug: 'comics-graphic-novels' },
 ];
 
 import { db } from "../src/db";
