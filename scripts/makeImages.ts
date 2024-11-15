@@ -29,7 +29,7 @@ const generateImage = (prompt: string) =>
         body: JSON.stringify({
           prompt,
           negative_prompt: "blurry, low quality, distorted, pixelated",
-          width: 512,
+          width: 800,
           height: 800,
           response_format: "url",
         }),
@@ -110,9 +110,8 @@ const main = Effect.gen(function* () {
       Effect.gen(function* () {
         console.log(`generating image for ${category.name}`);
         const imageRes = yield* generateImage(`
-            Generate a conceptual image representing this book category:
-            Category: ${category.name}
-            Style: Modern, symbolic, clean composition with books or e-readers`);
+            generating image for Category: ${category.name}
+            `);
         const imageUrl = imageRes.url;
         if (!imageUrl) {
           return yield* Effect.fail("no image");
@@ -147,9 +146,9 @@ const main = Effect.gen(function* () {
       Effect.gen(function* () {
         console.log(`generating image for ${category.name}`);
         const imageRes = yield* generateImage(`
-            Generate a image representing this book subcategory:
+            generating image for
             Category: ${category.name}
-            Style: Contemporary setting with e-readers and books`);
+            `);
         const imageUrl = imageRes.url;
         if (!imageUrl) {
           return yield* Effect.fail("no image");
