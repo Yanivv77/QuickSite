@@ -33,7 +33,7 @@ export default async function RootLayout({
   const cart = await getCart();
 
   return (
-    <html lang="en" className="h-full">
+    <html lang="en" dir="rtl" className="h-full">
       <body
         className={`${helvetica.variable} ${helveticaRoman.variable} ${futura.variable} flex min-h-full flex-col antialiased`}
       >

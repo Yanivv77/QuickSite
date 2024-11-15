@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { ImageResponse } from "next/og";
+import { ImageResponse as NextImageResponse } from "next/og";
 import { notFound } from "next/navigation";
 
 // Route segment config
@@ -34,7 +34,7 @@ export default async function Image(props: {
   if (!productData) {
     notFound();
   }
-  return new ImageResponse(
+  return new NextImageResponse(
     (
       <div
         style={{
