@@ -9,7 +9,7 @@ import { eq } from "drizzle-orm";
 import { db } from "@/db";
 
 // Update RPM control constants to be even more conservative
-const REQUESTS_PER_MINUTE = 200; // Reduced further for safety
+const REQUESTS_PER_MINUTE = 100; // Reduced further for safety
 const DELAY_BETWEEN_REQUESTS = (60 * 1000) / REQUESTS_PER_MINUTE; // = 1200ms between requests
 
 const delay = (ms: number) => Effect.promise(() => new Promise(resolve => setTimeout(resolve, ms)));

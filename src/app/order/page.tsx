@@ -4,11 +4,15 @@ import { X } from "lucide-react";
 import type { CartItem } from "@/lib/cart";
 import Image from "next/image";
 import { db } from "@/db";
-
+import { removeFromCart } from "@/lib/actions";
 import { products } from "@/db/schema";
 import { inArray } from "drizzle-orm";
 import Link from "next/link";
-import { removeFromCart } from "@/lib/actions";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Order",
+};
 
 export default async function Page() {
   const cart = await getCart();
@@ -104,6 +108,7 @@ async function CartItem({ item }: { item: CartItem }) {
               alt="Product"
               width={80}
               height={80}
+              quality={65}
             />
           </div>
           <div className="flex-grow">
