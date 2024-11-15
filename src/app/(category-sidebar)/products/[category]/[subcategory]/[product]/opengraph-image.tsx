@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { ImageResponse as NextImageResponse } from "next/og";
+import { ImageResponse } from "next/og";
 import { notFound } from "next/navigation";
 
 // Route segment config
@@ -34,7 +34,7 @@ export default async function Image(props: {
   if (!productData) {
     notFound();
   }
-  return new NextImageResponse(
+  return new ImageResponse(
     (
       <div
         style={{
@@ -97,6 +97,16 @@ export default async function Image(props: {
           >
             {productData.description}
           </div>
+        </div>
+        <div
+          style={{
+            textAlign: "center",
+            display: "flex",
+            fontSize: "24px",
+            marginTop: "10px",
+          }}
+        >
+          ${productData.price}
         </div>
       </div>
     ),
