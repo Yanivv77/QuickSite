@@ -10,29 +10,35 @@ export default async function Home() {
     orderBy: (collections, { asc }) => asc(collections.name),
   });
   return (
-    <div className="p-4">
+    <div className="flex flex-col gap-8">
       {collections.map((collection) => (
-        <div key={collection.name}>
-          <h2 className="text-xl font-semibold">{collection.name}</h2>
-          <div className="grid grid-cols-2 gap-4 border-b-2 py-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+        <section key={collection.name}>
+          <h2 className="mb-6 text-2xl font-semibold tracking-tight text-center">
+            {collection.name}
+          </h2>
+          <div className="flex flex-wrap gap-6 justify-center">
             {collection.categories.map((category) => (
               <Link
-                key={category.name}
-                className="flex flex-col items-center text-center"
+                key={category.slug}
                 href={`/products/${category.slug}`}
+                className="group relative overflow-hidden"
               >
-                <Image
-                  src={category.image_url ?? "/placeholder.svg"}
-                  alt={`A small picture of ${category.name}`}
-                  className="mb-2 h-14 w-14 border hover:bg-yellow-200"
-                  width={48}
-                  height={48}
-                />
-                <span className="text-xs">{category.name}</span>
+                <div className="h-[200px] w-[200px] overflow-hidden rounded-lg border bg-muted">
+                  <Image
+                    src={category.image_url ?? "/placeholder.svg"}
+                    alt={category.name}
+                    width={200}
+                    height={200}
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                </div>
+                <div className="mt-2">
+                  <h3 className="font-medium text-center">{category.name}</h3>
+                </div>
               </Link>
             ))}
           </div>
-        </div>
+        </section>
       ))}
     </div>
   );
