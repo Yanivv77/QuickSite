@@ -43,6 +43,7 @@ export default async function Page(props: {
           <Image
             src={productData.image_url ?? "/placeholder.svg?height=64&width=64"}
             alt={`A small picture of ${productData.name}`}
+            quality={80}
             height={256}
             width={256}
             className="h-64 w-64 flex-shrink-0 border-2"
