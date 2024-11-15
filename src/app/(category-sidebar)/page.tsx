@@ -9,6 +9,7 @@ export default async function Home() {
     },
     orderBy: (collections, { asc }) => asc(collections.name),
   });
+
   return (
     <div className="flex flex-col gap-8">
       {collections.map((collection) => (
@@ -16,7 +17,7 @@ export default async function Home() {
           <h2 className="mb-6 text-2xl font-semibold tracking-tight text-center">
             {collection.name}
           </h2>
-          <div className="flex flex-wrap gap-6 justify-center">
+          <div className="flex flex-wrap gap-12 justify-center">
             {collection.categories.map((category) => (
               <Link
                 key={category.slug}
