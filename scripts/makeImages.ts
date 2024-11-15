@@ -9,7 +9,7 @@ import { eq } from "drizzle-orm";
 import { db } from "@/db";
 
 // Update RPM control constants to be even more conservative
-const REQUESTS_PER_MINUTE = 50; // Reduced further for safety
+const REQUESTS_PER_MINUTE = 200; // Reduced further for safety
 const DELAY_BETWEEN_REQUESTS = (60 * 1000) / REQUESTS_PER_MINUTE; // = 1200ms between requests
 
 const delay = (ms: number) => Effect.promise(() => new Promise(resolve => setTimeout(resolve, ms)));
@@ -20,7 +20,7 @@ const generateImage = (prompt: string) =>
     yield* Effect.flatMap(delay(DELAY_BETWEEN_REQUESTS), Effect.succeed);
     
     const res = yield* Effect.tryPromise(() =>
-      fetch("https://api.getimg.ai/v1/stable-diffusion/text-to-image", {
+      fetch("https://api.getimg.ai/v1/stable-diffusion-xl/text-to-image", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -28,7 +28,7 @@ const generateImage = (prompt: string) =>
         },
         body: JSON.stringify({
           prompt,
-          negative_prompt: "blurry, low quality, distorted, pixelated",
+          negative_prompt: "blurry, low quality, distorted, pixelated, people, faces,books,book,home",
           width: 800,
           height: 800,
           response_format: "url",
@@ -108,10 +108,11 @@ const main = Effect.gen(function* () {
   yield* Effect.all(
     categories.map((category) =>
       Effect.gen(function* () {
-        console.log(`generating image for ${category.name}`);
+        console.log(`generating image for ${category.slug}`);
         const imageRes = yield* generateImage(`
-            generating image for Category: ${category.name}
-            `);
+          Create a professional, high-quality symbolic representation of ${category.slug} .
+          Mood: creative, professional ,sophisticated andrealistic
+        `);
         const imageUrl = imageRes.url;
         if (!imageUrl) {
           return yield* Effect.fail("no image");
@@ -144,11 +145,11 @@ const main = Effect.gen(function* () {
   yield* Effect.all(
     subcategories.map((category) =>
       Effect.gen(function* () {
-        console.log(`generating image for ${category.name}`);
+        console.log(`generating image for ${category.slug}`);
         const imageRes = yield* generateImage(`
-            generating image for
-            Category: ${category.name}
-            `);
+          Create a professional, high-quality symbolic representation of ${category.slug} .
+          Mood: creative, professional , sophisticated and realistic
+        `);
         const imageUrl = imageRes.url;
         if (!imageUrl) {
           return yield* Effect.fail("no image");
