@@ -10,6 +10,7 @@ import { comparePasswords, hashPassword, setSession } from "@/lib/session";
 import { authRateLimit ,signUpRateLimit} from "@/lib/rate-limit";
 
 
+
 const authSchema = z.object({
   username: z.string().min(1),
   password: z.string().min(1),
