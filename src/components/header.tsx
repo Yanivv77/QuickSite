@@ -12,9 +12,9 @@ export function Header() {
         {/* Logo */}
         <Link
           href="/"
-          className="text-xl font-medium tracking-tight text-neutral-900 hover:text-neutral-600"
+          className="text-2xl font-medium tracking-tight text-neutral-900 hover:text-neutral-600 pb-1"
         >
-          <span className="">קוויקבוקס</span>
+          קוויקבוקס
         </Link>
 
         {/* Search - Center */}

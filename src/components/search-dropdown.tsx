@@ -1,86 +1,173 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from "react"
-import { Input } from "@/components/ui/input"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Search, X } from 'lucide-react'
-import Image from "next/image"
-import { cn } from "@/lib/utils"
-import { Product } from "../db/schema"
-import { searchProducts } from "../lib/actions"
-import Link from "next/link"
+import { useEffect, useState, useRef } from "react";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Search, X } from "lucide-react";
+import Image from "next/image";
+import { cn } from "@/lib/utils";
+import { Product } from "../db/schema";
+import { Link } from "@/components/ui/link";
+import { useParams, useRouter } from "next/navigation";
+import { ProductSearchResult } from "@/app/api/search/route";
 
-type SearchResult = Product & { href: string }
+type SearchResult = Product & { href: string };
 
 export function SearchDropdownComponent() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [filteredItems, setFilteredItems] = useState<SearchResult[]>([])
-  const [isOpen, setIsOpen] = useState(false)
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredItems, setFilteredItems] = useState<SearchResult[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const [isLoading, setIsLoading] = useState(false);
 
+  const router = useRouter();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // we don't need react query, we have react query at home
+  // react query at home:
   useEffect(() => {
-    const search = async () => {
-      const results = await searchProducts(searchTerm)
-      setFilteredItems(results)
-    }
-
-    if (searchTerm) {
-      search()
+    if (searchTerm.length === 0) {
+      setFilteredItems([]);
     } else {
-      setFilteredItems([])
+      setIsLoading(true);
+
+      const searchedFor = searchTerm;
+      fetch(`/api/search?q=${searchTerm}`).then(async (results) => {
+        const currentSearchTerm = inputRef.current?.value;
+        if (currentSearchTerm !== searchedFor) {
+          return;
+        }
+        const json = await results.json();
+        setIsLoading(false);
+        setFilteredItems(json as ProductSearchResult);
+      });
     }
-  }, [searchTerm])
+  }, [searchTerm, inputRef]);
+
+  const params = useParams();
+  useEffect(() => {
+    if (!params.product) {
+      const subcategory = params.subcategory;
+      setSearchTerm(
+        typeof subcategory === "string" ? subcategory.replaceAll("-", " ") : "",
+      );
+    }
+  }, [params]);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "ArrowDown") {
+      setHighlightedIndex((prevIndex) =>
+        prevIndex < filteredItems.length - 1 ? prevIndex + 1 : 0,
+      );
+    } else if (e.key === "ArrowUp") {
+      setHighlightedIndex((prevIndex) =>
+        prevIndex > 0 ? prevIndex - 1 : filteredItems.length - 1,
+      );
+    } else if (e.key === "Enter" && highlightedIndex >= 0) {
+      router.push(filteredItems[highlightedIndex].href);
+      setSearchTerm(filteredItems[highlightedIndex].name);
+      setIsOpen(false);
+      inputRef.current?.blur();
+    }
+  };
+
+  // close dropdown when clicking outside dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+        inputRef.current?.blur();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdownRef]);
 
   return (
-    <div className="font-sans" dir="rtl">
+    <div className="font-sans" ref={dropdownRef} dir="rtl">
       <div className="relative w-full">
         <div className="relative">
           <Input
+            ref={inputRef}
+            autoCapitalize="off"
+            autoCorrect="off"
             type="text"
             placeholder="חיפוש..."
             value={searchTerm}
             onChange={(e) => {
-              setSearchTerm(e.target.value)
-              setIsOpen(e.target.value.length > 0)
+              setSearchTerm(e.target.value);
+              setIsOpen(e.target.value.length > 0);
+              setHighlightedIndex(-1);
             }}
-            className="w-full max-w-[375px] pr-10 text-right"
+            onKeyDown={handleKeyDown}
+              className="w-full max-w-[500px] rounded-full border-neutral-200 bg-neutral-100 pr-10 text-right focus-visible:ring-0 focus-visible:ring-offset-0"
           />
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          {isOpen && (
-            <button
-              onClick={() => {
-                setSearchTerm("")
-                setIsOpen(false)
-              }}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-            >
-              <X className="h-4 w-4" />
-              <span className="sr-only">נקה חיפוש</span>
-            </button>
-          )}
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+          <X
+            className={cn(
+              "absolute right-3 top-2 h-5 w-5 text-muted-foreground",
+              {
+                hidden: !isOpen,
+              },
+            )}
+            onClick={() => {
+              setSearchTerm("");
+              setIsOpen(false);
+            }}
+            
+          />
         </div>
-        {isOpen && filteredItems.length > 0 && (
-          <div className="absolute z-10 mt-1 w-full rounded-md bg-background shadow-lg ring-1 ring-border">
-            <ScrollArea className="max-h-[300px]">
-              {filteredItems.map((item) => (
-                <Link
-                  href={item.href}
-                  key={item.slug}
-                  className="flex items-center gap-3 p-3 transition-colors hover:bg-muted"
-                >
-                  <Image
-                    src={item.image_url ?? "/placeholder.svg"}
-                    alt=""
-                    className="h-10 w-10 rounded-sm object-cover"
-                    height={40}
-                    width={40}
-                  />
-                  <span className="text-sm">{item.name}</span>
-                </Link>
-              ))}
+        {isOpen && (
+          <div className="absolute z-10 w-full border border-gray-200 bg-white shadow-lg">
+            <ScrollArea className="h-[300px]">
+              {filteredItems.length > 0 ? (
+                filteredItems.map((item, index) => (
+                  <Link href={item.href} key={item.slug} prefetch={true}>
+                    <div
+                      className={cn("flex cursor-pointer items-center p-2", {
+                        "bg-gray-100": index === highlightedIndex,
+                      })}
+                      onMouseEnter={() => setHighlightedIndex(index)}
+                      onClick={() => {
+                        setSearchTerm(item.name);
+                        setIsOpen(false);
+                        inputRef.current?.blur();
+                      }}
+                    >
+                      <Image
+                        loading="eager"
+                        decoding="sync"
+                        src={item.image_url ?? "/placeholder.svg"}
+                        alt=""
+                        className="h-10 w-10 pr-2"
+                        height={40}
+                        width={40}
+                        quality={65}
+                      />
+                      <span className="text-sm">{item.name}</span>
+                    </div>
+                  </Link>
+                ))
+              ) : isLoading ? (
+                <div className="flex h-full items-center justify-center">
+                  <p className="text-sm text-gray-500">טוען...</p>
+                </div>
+              ) : (
+                <div className="flex h-full items-center justify-center">
+                  <p className="text-sm text-gray-500">לא נמצאו תוצאות</p>
+                </div>
+              )}
             </ScrollArea>
           </div>
         )}
       </div>
     </div>
-  )
+  );
 }

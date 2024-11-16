@@ -1,12 +1,5 @@
 "use server";
-import { sql } from "drizzle-orm";
-import { db } from "../db";
-import {
-  categories,
-  products,
-  subcategories,
-  subcollections,
-} from "../db/schema";
+
 import { getCart, updateCart } from "./cart";
 
 export async function addToCart(prevState: unknown, formData: FormData) {
@@ -58,63 +51,4 @@ export async function removeFromCart(formData: FormData) {
   }
   const newCart = prevCart.filter((item) => item.productSlug !== productSlug);
   await updateCart(newCart);
-}
-
-export async function searchProducts(searchTerm: string) {
-  let results;
-
-  if (searchTerm.length <= 2) {
-    // If the search term is short (e.g., "W"), use ILIKE for prefix matching
-    results = await db
-      .select()
-      .from(products)
-      .where(sql`${products.name} ILIKE ${searchTerm + "%"}`) // Prefix match
-      .limit(5)
-      .innerJoin(
-        subcategories,
-        sql`${products.subcategory_slug} = ${subcategories.slug}`,
-      )
-      .innerJoin(
-        subcollections,
-        sql`${subcategories.subcollection_id} = ${subcollections.id}`,
-      )
-      .innerJoin(
-        categories,
-        sql`${subcollections.category_slug} = ${categories.slug}`,
-      );
-  } else {
-    // For longer search terms, use full-text search with tsquery
-    const formattedSearchTerm = searchTerm
-      .split(" ")
-      .map((term) => `${term}:*`)
-      .join(" & ");
-
-    results = await db
-      .select()
-      .from(products)
-      .where(
-        sql`to_tsvector('english', ${products.name}) @@ to_tsquery('english', ${formattedSearchTerm})`,
-      )
-      .limit(5)
-      .innerJoin(
-        subcategories,
-        sql`${products.subcategory_slug} = ${subcategories.slug}`,
-      )
-      .innerJoin(
-        subcollections,
-        sql`${subcategories.subcollection_id} = ${subcollections.id}`,
-      )
-      .innerJoin(
-        categories,
-        sql`${subcollections.category_slug} = ${categories.slug}`,
-      );
-  }
-
-  return results.map((item) => {
-    const href = `/products/${item.categories.slug}/${item.subcategories.slug}/${item.products.slug}`;
-    return {
-      ...item.products,
-      href,
-    };
-  });
 }
