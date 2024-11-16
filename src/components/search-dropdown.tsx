@@ -125,7 +125,7 @@ export function SearchDropdownComponent() {
           />
         </div>
         {isOpen && (
-          <div className="absolute z-10 w-full border border-gray-200 bg-white shadow-lg">
+          <div className="absolute z-10 w-full max-w-[500px] border border-gray-200 bg-white shadow-lg">
             <ScrollArea className="h-[300px]">
               {filteredItems.length > 0 ? (
                 filteredItems.map((item, index) => (
@@ -147,7 +147,7 @@ export function SearchDropdownComponent() {
                         src={item.image_url ?? "/placeholder.svg"}
                         alt=""
                         className="h-10 w-10 pr-2"
-                        height={40}
+                        height={60}
                         width={40}
                         quality={65}
                       />
