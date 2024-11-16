@@ -1,7 +1,6 @@
 import { 
   Sidebar,
   SidebarProvider,
-  SidebarHeader,
   SidebarContent, 
   SidebarMenuButton, 
   SidebarMenuItem, 
@@ -9,25 +8,25 @@ import {
   SidebarMenu,
   SidebarMobile
 } from "@/components/ui/sidebar";
-import { getCategories } from "@/db/scripts_utils";
 import { Menu } from "lucide-react";
 import Link from "next/link";
+import { getCollections } from "@/lib/queries";
+
 
 export default async function Layout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const allCategories = await getCategories();
-
+  const allCollections = await getCollections();
   return (
     <SidebarProvider>   
       <div className="flex h-screen">
         {/* Mobile Sidebar */}
         <SidebarMobile>
-          <SidebarContent className="px-3 pt-6">
+          <SidebarContent>
             <SidebarMenu>
-              {allCategories.map((category) => (
+              {allCollections.map((category) => (
                 <SidebarMenuItem key={category.name}>
                   <Link href={`/products/${category.slug}`} className="block w-full">
                     <SidebarMenuButton>{category.name}</SidebarMenuButton>
@@ -39,10 +38,10 @@ export default async function Layout({
         </SidebarMobile>
 
         {/* Desktop Sidebar */}
-        <Sidebar className="hidden md:flex w-64 border-l border-border/10 bg-slate-50/50">
-          <SidebarContent className="px-3 pt-6">
+        <Sidebar>
+        <SidebarContent>
             <SidebarMenu>
-              {allCategories.map((category) => (
+              {allCollections.map((category) => (
                 <SidebarMenuItem key={category.name}>
                   <Link href={`/products/${category.slug}`} className="block w-full">
                     <SidebarMenuButton>{category.name}</SidebarMenuButton>
@@ -54,15 +53,10 @@ export default async function Layout({
         </Sidebar>
 
         {/* Main Content */}
+        <SidebarTrigger />
         <div className="flex-1 flex flex-col">
-          <header className="flex h-16 items-center border-b border-border/10 px-6">
-            <SidebarTrigger className="md:hidden hover:bg-slate-100 rounded-lg p-2">
-              <Menu className="h-5 w-5 text-slate-600" />
-              <span className="sr-only">Toggle Sidebar</span>
-            </SidebarTrigger>
-          </header>
           <main className="flex-1 overflow-auto bg-slate-50/50">
-            <div className="container mx-auto p-6">
+            <div className=" ">
               {children}
             </div>
           </main>

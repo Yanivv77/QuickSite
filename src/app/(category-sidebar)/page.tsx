@@ -12,12 +12,17 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col gap-8">
+
+      <div className="flex flex-row justify-center">
+      hero section
+      </div>
+
       {collections.map((collection) => (
         <section key={collection.name}>
           <h2 className="mb-6 text-2xl font-semibold tracking-tight text-center">
             {collection.name}
           </h2>
-          <div className="flex flex-wrap gap-12 justify-center">
+          <div className="flex flex-wrap gap-16 justify-center">
             {collection.categories.map((category) => (
               <Link
                 key={category.slug}
