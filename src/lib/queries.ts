@@ -9,7 +9,7 @@ import {
 } from "@/db/schema";
 import { db } from "@/db";
 import { eq, and, count } from "drizzle-orm";
-import { unstable_cache } from "next/cache";
+import { unstable_cache } from "./unstable-cache";
 import { sql } from "drizzle-orm";
 
 export async function getUser() {
