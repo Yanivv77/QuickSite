@@ -64,7 +64,8 @@ export default async function Hero() {
                     priority={true}
                     loading="eager"
                     className="object-cover w-full h-full"
-                    quality={80}
+                    quality={65}
+                    sizes="(max-width: 768px) 150px, 300px"
                   />
                 </div>
               ))}
