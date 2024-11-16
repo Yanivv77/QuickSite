@@ -1,21 +1,8 @@
 import type { Metadata, Viewport } from "next";
-import localFont from "next/font/local";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import { Header } from "@/components/header";
-
-const helvetica = localFont({
-  src: "./fonts/HelveticaNeueLTPro-Md.woff",
-  variable: "--font-helvetica",
-});
-const helveticaRoman = localFont({
-  src: "./fonts/HelveticaNeueLTPro-Roman.woff",
-  variable: "--font-helvetica-roman",
-});
-
-const futura = localFont({
-  src: "./fonts/FuturaLTPro-BoldCond.woff2",
-  variable: "--font-futura",
-});
 
 export const metadata: Metadata = {
   title: {
@@ -31,8 +18,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   minimumScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+  maximumScale: 5,
+  userScalable: true,
 };
 
 export default function RootLayout({
@@ -41,17 +28,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="he" className="h-full" dir="rtl">
-
-
-      <body
-        className={`${helvetica.variable} ${helveticaRoman.variable} ${futura.variable} flex min-h-screen flex-col antialiased`}
-      >
+    <html lang="he" className={`h-full ${GeistSans.variable} ${GeistMono.variable}`} dir="rtl">
+      <body className="flex min-h-screen flex-col antialiased">
         <Header />
-        
         <main className="flex-1">
           {children}
-
         </main>
       </body>
     </html>
