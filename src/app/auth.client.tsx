@@ -135,10 +135,11 @@ export function SignInSignUp() {
   return (
     <Popover>
       <PopoverTrigger className="flex flex-row items-center gap-1">
-        Sign In{" "}
-        <svg viewBox="0 0 10 6" className="h-[6px] w-[10px]">
+      <svg viewBox="0 0 10 6" className="h-[6px] w-[10px]">
           <polygon points="0,0 5,6 10,0"></polygon>
         </svg>
+        Sign In{" "}
+        
       </PopoverTrigger>
       <PopoverContent className="px-8 py-4">
         <LoginForm />
@@ -152,11 +153,12 @@ import { signOut } from "./(auth)/actions";
 export function SignOut(props: { username: string }) {
   return (
     <Popover>
-      <PopoverTrigger className="flex flex-row items-center gap-1">
-        {props.username}{" "}
-        <svg viewBox="0 0 10 6" className="h-[6px] w-[10px]">
+      <PopoverTrigger className="flex flex-row items-center gap-2">
+      <svg viewBox="0 0 10 6" className="h-[6px] w-[10px]">
           <polygon points="0,0 5,6 10,0"></polygon>
         </svg>
+        {props.username}{" "}
+       
       </PopoverTrigger>
       <PopoverContent className="flex w-32 flex-col items-center px-8 py-4">
         <form>

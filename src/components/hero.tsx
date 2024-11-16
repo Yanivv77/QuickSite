@@ -2,8 +2,11 @@ import React from 'react'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
+import { getRandomProducts } from "@/db/products"
 
-export default function Hero() {
+export default async function Hero() {
+  const randomProducts = await getRandomProducts(2)
+
   return (
     <div className=" from-primary/5 to-secondary/5 text-right" dir="rtl">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
@@ -29,14 +32,11 @@ export default function Hero() {
           <div className="flex-1 relative w-full max-w-md">
             <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-secondary/10 rounded-xl transform rotate-2"></div>
             <div className="relative grid grid-cols-2 gap-3 p-3 bg-background rounded-xl shadow-lg">
-              {[
-                "/placeholder.svg?height=400&width=300",
-                "/placeholder.svg?height=400&width=300",
-              ].map((src, index) => (
-                <div key={index} className="aspect-[3/4] overflow-hidden rounded-md shadow-sm transition-transform duration-300 hover:scale-105 hover:shadow-md">
+              {randomProducts.map((product) => (
+                <div key={product.slug} className="aspect-[3/4] overflow-hidden rounded-md shadow-sm transition-transform duration-300 hover:scale-105 hover:shadow-md">
                   <Image
-                    src={src}
-                    alt={`ספר מומלץ ${index + 1}`}
+                    src={product.image_url ?? "/placeholder.svg?height=400&width=300"}
+                    alt={product.name}
                     width={300}
                     height={400}
                     className="object-cover w-full h-full"
@@ -52,6 +52,7 @@ export default function Hero() {
           <p>תשלום מאובטח</p>
         </div>
       </div>
+      
     </div>
   )
 }

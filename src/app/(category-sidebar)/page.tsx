@@ -2,6 +2,8 @@ import Link from "next/link";
 import { db } from "@/db";
 import Image from "next/image";
 import Hero from "@/components/hero";
+import { Footer } from "@/components/footer";
+import { Header } from "@/components/header";
 
 
 export default async function Home() {
@@ -46,6 +48,7 @@ export default async function Home() {
           </div>
         </section>
       ))}
+      <Footer />
     </div>
   );
 }
