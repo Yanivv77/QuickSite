@@ -33,7 +33,7 @@ export default async function Home() {
                     loading={imageCount++ < 15 ? "eager" : "lazy"}
                     decoding="sync"
                     src={category.image_url ?? "/placeholder.svg"}
-                    alt={category.name}
+                    alt={category.slug}
                     width={200}
                     height={200}
                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
