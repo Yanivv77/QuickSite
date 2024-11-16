@@ -42,6 +42,7 @@
     "lucide-react": "^0.454.0",
     "next": "15.0.4-canary.11",
     "openai": "^4.71.1",
+    "postcss-hover-media-feature": "^1.0.2",
     "react": "19.0.0-rc-7ac8e612-20241113",
     "react-dom": "19.0.0-rc-7ac8e612-20241113",
     "slugify": "^1.6.6",

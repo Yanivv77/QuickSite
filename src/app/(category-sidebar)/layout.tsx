@@ -8,7 +8,6 @@ import {
   SidebarMenu,
   SidebarMobile
 } from "@/components/ui/sidebar";
-import { Menu } from "lucide-react";
 import Link from "next/link";
 import { getCollections } from "@/lib/queries";
 

@@ -3,9 +3,15 @@ import { ArrowLeft } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { getRandomProducts } from "@/db/products"
+import { cache } from 'react'
+
+// Cache the random products fetch
+const getRandomProductsCached = cache(async () => {
+  return await getRandomProducts(2)
+})
 
 export default async function Hero() {
-  const randomProducts = await getRandomProducts(2)
+  const randomProducts = await getRandomProductsCached()
 
   return (
     <div className=" from-primary/5 to-secondary/5 text-right" dir="rtl">

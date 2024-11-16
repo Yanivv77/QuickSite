@@ -5,6 +5,24 @@ import { notFound } from "next/navigation";
 import { ne } from "drizzle-orm";
 import { AddToCartForm } from "@/components/add-to-cart-form";
 
+// Add metadata generation to help with caching
+export async function generateMetadata({ params }: {
+  params: { product: string }
+}) {
+  const urlDecodedProduct = decodeURIComponent(params.product)
+  const product = await db.query.products.findFirst({
+    where: (products, { eq }) => eq(products.slug, urlDecodedProduct),
+  })
+  
+  return {
+    title: product?.name,
+    description: product?.description,
+  }
+}
+
+// Add revalidation to cache the page
+export const revalidate = 3600 // Revalidate every hour
+
 export default async function Page(props: {
   params: Promise<{
     product: string;
@@ -65,6 +83,7 @@ export default async function Page(props: {
               subcategory_slug={subcategory}
               product={product}
               imageUrl={product.image_url}
+              loading="lazy"
             />
           ))}
         </div>

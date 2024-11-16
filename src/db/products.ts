@@ -1,14 +1,12 @@
-import { db } from "@/db";
-import { sql } from "drizzle-orm";
+import { products } from './schema'
+import { db } from '.'
+import { sql } from 'drizzle-orm'
 
-export async function getRandomProducts(limit: number = 2) {
-  return await db.query.products.findMany({
-    columns: {
-      name: true,
-      image_url: true,
-      slug: true,
-    },
-    orderBy: sql`RANDOM()`,
-    limit,
-  });
+export async function getRandomProducts(limit: number) {
+  // Using SQL RANDOM() with LIMIT is more efficient than fetching all and filtering
+  return await db.select()
+    .from(products)
+    .orderBy(sql`RANDOM()`)
+    .limit(limit)
+    .execute()
 }
