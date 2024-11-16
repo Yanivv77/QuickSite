@@ -73,6 +73,7 @@ export const SidebarTrigger = React.forwardRef<
     <button
       ref={ref}
       onClick={handleClick}
+      aria-label="Toggle sidebar"
       className={cn(
         "inline-flex items-center justify-center rounded-full p-2 text-gray-700 hover:bg-gray-100 transition-colors",
         className
@@ -130,6 +131,7 @@ export const SidebarMenuButton = React.forwardRef<
         isExpanded ? "justify-start" : "justify-center",
         className
       )}
+      aria-label={typeof children === 'string' ? children : 'Menu item'}
       {...props}
     >
       {children}
@@ -170,7 +172,10 @@ export const SidebarMobile = React.forwardRef<
               <DialogPrimitive.Title className="text-lg font-semibold">
                 Navigation
               </DialogPrimitive.Title>
-              <DialogPrimitive.Close className="rounded-full p-1 hover:bg-gray-100">
+              <DialogPrimitive.Close 
+                className="rounded-full p-1 hover:bg-gray-100"
+                aria-label="Close navigation menu"
+              >
                 <X className="h-5 w-5" />
                 <span className="sr-only">Close</span>
               </DialogPrimitive.Close>

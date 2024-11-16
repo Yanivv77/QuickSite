@@ -121,7 +121,7 @@ export function SearchDropdownComponent() {
               setSearchTerm("");
               setIsOpen(false);
             }}
-            
+            aria-label="Clear search"
           />
         </div>
         {isOpen && (
@@ -145,7 +145,7 @@ export function SearchDropdownComponent() {
                         loading="eager"
                         decoding="sync"
                         src={item.image_url ?? "/placeholder.svg"}
-                        alt=""
+                        alt={`${item.slug}`}
                         className="h-10 w-10 pr-2"
                         height={60}
                         width={40}

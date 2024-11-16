@@ -14,7 +14,11 @@ export function LoginForm() {
           className="w-full border border-black p-2 pr-16 outline-none"
           disabled
         />
-        <div className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-gray-600">
+        <div 
+          className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-gray-600"
+          role="button"
+          aria-label="Toggle password visibility"
+        >
           show
         </div>
       </div>

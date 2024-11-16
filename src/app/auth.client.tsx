@@ -26,8 +26,8 @@ export function LoginForm() {
   return (
     <Tabs defaultValue="signin" className="w-full">
       <TabsList className="grid w-full grid-cols-2 mb-4">
-        <TabsTrigger value="signin">Sign In</TabsTrigger>
-        <TabsTrigger value="signup">Sign Up</TabsTrigger>
+        <TabsTrigger value="signin" aria-label="Switch to sign in form">Sign In</TabsTrigger>
+        <TabsTrigger value="signup" aria-label="Switch to sign up form">Sign Up</TabsTrigger>
       </TabsList>
 
       <TabsContent value="signin">
@@ -69,6 +69,7 @@ export function LoginForm() {
               className="rounded-[1px] bg-accent1 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-accent1 focus:outline-none focus:ring-2 focus:ring-accent1 focus:ring-offset-2"
               disabled={pending}
               formAction={signInFormAction}
+              aria-label="Sign in to your account"
             >
               {"Sign In"}
             </Button>
@@ -118,6 +119,7 @@ export function LoginForm() {
               className="rounded-[1px] bg-accent1 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-accent1 focus:outline-none focus:ring-2 focus:ring-accent1 focus:ring-offset-2"
               disabled={pending}
               formAction={signUpFormAction}
+              aria-label="Create new account"
             >
               {"Sign Up"}
             </Button>
@@ -134,7 +136,10 @@ export function LoginForm() {
 export function SignInSignUp() {
   return (
     <Popover>
-      <PopoverTrigger className="flex flex-row items-center gap-1">
+      <PopoverTrigger 
+        className="flex flex-row items-center gap-1"
+        aria-label="Open sign in menu"
+      >
       <svg viewBox="0 0 10 6" className="h-[6px] w-[10px]">
           <polygon points="0,0 5,6 10,0"></polygon>
         </svg>
@@ -153,7 +158,7 @@ import { signOut } from "./(auth)/actions";
 export function SignOut(props: { username: string }) {
   return (
     <Popover>
-      <PopoverTrigger className="flex flex-row items-center gap-2">
+      <PopoverTrigger className="flex flex-row items-center gap-2" aria-label="Open user menu">
       <svg viewBox="0 0 10 6" className="h-[6px] w-[10px]">
           <polygon points="0,0 5,6 10,0"></polygon>
         </svg>
@@ -166,6 +171,7 @@ export function SignOut(props: { username: string }) {
             formAction={signOut}
             variant={"ghost"}
             className="rounded-[2px] border-[1px] border-accent1 bg-white px-4 py-2 text-xs font-semibold text-accent1"
+            aria-label="Sign out of your account"
           >
             {"Sign Out"}
           </Button>

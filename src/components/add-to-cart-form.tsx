@@ -11,6 +11,7 @@ export function AddToCartForm({ productSlug }: { productSlug: string }) {
       <button
         type="submit"
         className="max-w-[150px] rounded-[2px] bg-green-800 px-5 py-1 text-sm font-semibold text-white"
+        aria-label="Add item to cart"
       >
         Add to cart
       </button>
