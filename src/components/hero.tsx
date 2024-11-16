@@ -45,7 +45,10 @@ export default async function Hero() {
                     alt={product.name}
                     width={300}
                     height={400}
+                    priority={true}
+                    loading="eager"
                     className="object-cover w-full h-full"
+                    quality={80}
                   />
                 </div>
               ))}
