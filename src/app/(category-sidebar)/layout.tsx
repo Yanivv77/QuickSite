@@ -26,11 +26,15 @@ export default async function Layout({
         <SidebarMobile>
           <SidebarContent>
             <SidebarMenu>
-              {allCollections.map((category) => (
-                <SidebarMenuItem key={category.name}>
-                  <Link href={`/products/${category.slug}`} className="block w-full">
-                    <SidebarMenuButton>{category.name}</SidebarMenuButton>
-                  </Link>
+              {allCollections.map((collection) => (
+                <SidebarMenuItem key={collection.slug}>
+                <Link
+                prefetch={true}
+                href={`/${collection.slug}`}
+                className="block w-full py-1 text-xs text-gray-800 hover:bg-accent2 hover:underline"
+              >
+                {collection.name}
+              </Link>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -41,10 +45,14 @@ export default async function Layout({
         <Sidebar>
         <SidebarContent>
             <SidebarMenu>
-              {allCollections.map((category) => (
-                <SidebarMenuItem key={category.name}>
-                  <Link href={`/products/${category.slug}`} className="block w-full">
-                    <SidebarMenuButton>{category.name}</SidebarMenuButton>
+              {allCollections.map((collection) => (
+                <SidebarMenuItem key={collection.slug}>
+                  <Link 
+                  prefetch={true}
+                  href={`/${collection.slug}`} 
+                  className="block w-full"
+                  >
+                    <SidebarMenuButton>{collection.name}</SidebarMenuButton>
                   </Link>
                 </SidebarMenuItem>
               ))}
