@@ -1,6 +1,6 @@
 import { Metadata } from "next";
-import { db } from "../../../../db";
 import { notFound } from "next/navigation";
+import { getCategory } from "@/lib/queries";
 
 export async function generateMetadata({
   params,
@@ -9,13 +9,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { category: categoryParam } = await params;
   const urlDecoded = decodeURIComponent(categoryParam);
-  const category = await db.query.categories.findFirst({
-    where: (categories, { eq }) => eq(categories.slug, urlDecoded),
-    with: {
-      subcollections: true,
-    },
-    orderBy: (categories, { asc }) => asc(categories.name),
-  });
+  const category = await getCategory(urlDecoded);
 
   if (!category) {
     return notFound();
@@ -31,7 +25,7 @@ export async function generateMetadata({
     title: `${category.name}`,
     openGraph: {
       title: `${category.name}`,
-      description: `Choose from our selection of ${category.name.toLowerCase()}, including ${examples + (category.subcollections.length > 1 ? "," : "")} and more. In stock and ready to ship.`,
+      description: `בחר מתוך המבחר שלנו של ${category.name}, כולל ${examples + (category.subcollections.length > 1 ? "," : "")} ועוד. במלאי ומוכן למשלוח.`,
     },
   };
 }

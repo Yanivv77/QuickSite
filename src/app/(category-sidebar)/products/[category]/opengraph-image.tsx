@@ -1,15 +1,15 @@
-import { db } from "@/db";
 import { ImageResponse } from "next/og";
 import { notFound } from "next/navigation";
+import { getCategory } from "@/lib/queries";
 
 // Route segment config
 export const runtime = "edge";
 
 // Image metadata
-export const alt = "About the category";
+export const alt = "אודות הקטגוריה";
 export const size = {
-  width: 1200,
-  height: 630,
+  width: 800,
+  height: 8000,
 };
 
 export const contentType = "image/png";
@@ -23,13 +23,7 @@ export default async function Image(props: {
   const { category: categoryParam } = await props.params;
   const urlDecodedCategory = decodeURIComponent(categoryParam);
 
-  const category = await db.query.categories.findFirst({
-    where: (categories, { eq }) => eq(categories.slug, urlDecodedCategory),
-    with: {
-      subcollections: true,
-    },
-    orderBy: (categories, { asc }) => asc(categories.name),
-  });
+  const category = await getCategory(urlDecodedCategory);
 
   if (!category) {
     return notFound();
@@ -40,9 +34,9 @@ export default async function Image(props: {
     .map((s) => s.name)
     .join(", ");
 
-  const description = `Choose from our selection of ${category.name}, including ${examples + (category.subcollections.length > 1 ? "," : "")} and more. In stock and ready to ship.`;
+  const description = `בחר מתוך המבחר שלנו של ${category.name}, כולל ${examples + (category.subcollections.length > 1 ? "," : "")} ועוד. במלאי ומוכן למשלוח.`;
 
-  // TODO: Change design to add subcategory images that blur out
+
   return new ImageResponse(
     (
       <div
@@ -66,8 +60,8 @@ export default async function Image(props: {
         >
           <div
             style={{
-              width: "200px",
-              height: "200px",
+              width: "800px",
+              height: "800px",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -110,8 +104,8 @@ export default async function Image(props: {
       </div>
     ),
     {
-      width: 1200,
-      height: 630,
+      width: 800,
+      height: 800,
     },
   );
 }

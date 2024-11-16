@@ -1,14 +1,13 @@
-import { db } from "@/db";
-import {
-  categories,
-  products,
-  subcategories,
-  subcollections,
-} from "@/db/schema";
-import { count, eq } from "drizzle-orm";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/components/ui/link";
 import { notFound } from "next/navigation";
+import { getCategory, getCategoryProductCount } from "@/lib/queries";
+import { db } from "@/db";
+import { categories } from "@/db/schema";
+
+export async function generateStaticParams() {
+  return await db.select({ category: categories.slug }).from(categories);
+}
 
 export default async function Page(props: {
   params: Promise<{
@@ -17,39 +16,20 @@ export default async function Page(props: {
 }) {
   const { category } = await props.params;
   const urlDecoded = decodeURIComponent(category);
-  const cat = await db.query.categories.findFirst({
-    where: (categories, { eq }) => eq(categories.slug, urlDecoded),
-    with: {
-      subcollections: {
-        with: {
-          subcategories: true,
-        },
-      },
-    },
-    orderBy: (categories, { asc }) => asc(categories.name),
-  });
+  const cat = await getCategory(urlDecoded);
   if (!cat) {
     return notFound();
   }
 
-  const countRes = await db
-    .select({ count: count() })
-    .from(categories)
-    .leftJoin(subcollections, eq(categories.slug, subcollections.category_slug))
-    .leftJoin(
-      subcategories,
-      eq(subcollections.id, subcategories.subcollection_id),
-    )
-    .leftJoin(products, eq(subcategories.slug, products.subcategory_slug))
-    .where(eq(categories.slug, cat.slug));
+  const countRes = await getCategoryProductCount(urlDecoded);
 
   const finalCount = countRes[0]?.count;
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container p-4">
       {finalCount && (
         <h1 className="mb-2 border-b-2 text-sm font-bold">
-          {finalCount} Products
+          {finalCount} {finalCount === 1 ? "Product" : "Products"}
         </h1>
       )}
       <div className="space-y-4">
@@ -58,16 +38,19 @@ export default async function Page(props: {
             <h2 className="mb-2 border-b-2 text-lg font-semibold">
               {subcollection.name}
             </h2>
-            <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-4">
+            <div className="flex flex-row flex-wrap gap-2">
               {subcollection.subcategories.map(
                 (subcategory, subcategoryIndex) => (
                   <Link
+                    prefetch={true}
                     key={subcategoryIndex}
-                    className="group flex h-full flex-row border px-4 py-2 hover:bg-gray-100"
+                    className="group flex h-full w-full flex-row gap-2 border px-4 py-2 hover:bg-gray-100 sm:w-[200px]"
                     href={`/products/${category}/${subcategory.slug}`}
                   >
                     <div className="py-2">
                       <Image
+                        loading="eager"
+                        decoding="sync"
                         src={subcategory.image_url ?? "/placeholder.svg"}
                         alt={`A small picture of ${subcategory.name}`}
                         width={48}
@@ -76,7 +59,7 @@ export default async function Page(props: {
                         className="h-12 w-12 flex-shrink-0 object-cover"
                       />
                     </div>
-                    <div className="flex h-24 flex-grow flex-col items-start py-2">
+                    <div className="flex h-16 flex-grow flex-col items-start py-2">
                       <div className="text-sm font-medium text-gray-700 group-hover:underline">
                         {subcategory.name}
                       </div>
