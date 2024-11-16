@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { db } from "@/db";
 import Image from "next/image";
+import Hero from "@/components/hero";
+
 
 export default async function Home() {
   const collections = await db.query.collections.findMany({
@@ -13,9 +15,7 @@ export default async function Home() {
   return (
     <div className="flex flex-col gap-8">
 
-      <div className="flex flex-row justify-center">
-      hero section
-      </div>
+      <Hero />
 
       {collections.map((collection) => (
         <section key={collection.name}>
