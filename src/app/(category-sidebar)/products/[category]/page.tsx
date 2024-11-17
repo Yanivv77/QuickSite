@@ -48,7 +48,7 @@ export default async function Page(props: {
       </Breadcrumb>
 
       <h1 className="mb-4 text-2xl font-bold tracking-tight text-gray-900 text-center">
-        {cat.name}
+        {cat.name}{' '}
         {typeof finalCount === 'number' && (
           <span className="ml-3 text-lg font-medium text-gray-600">
             ({finalCount} {finalCount === 1 ? "מוצר" : "מוצרים"})
@@ -71,14 +71,14 @@ export default async function Page(props: {
                 >
                   <div className="aspect-square overflow-hidden">
                     <Image
-                      priority={subcategoryIndex < 4}
+                      loading="eager"
+                      decoding="sync"
                       src={subcategory.image_url ?? "/placeholder.svg"}
                       alt={subcategory.name}
                       width={300}
                       height={300}
-                      quality={75}
-                      sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                      className="h-full w-full  lex-shrink-0 object-cover transition-transform duration-300 group-hover:scale-105"
+                      quality={50}
+                     className="h-full w-full flex-shrink-0 object-cover transition-transform duration-300 group-hover:scale-105"
                     />
                   </div>
                   <div className="p-3">

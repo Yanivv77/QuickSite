@@ -17,9 +17,9 @@ export default async function Home() {
       <Hero />
       {collections.map((collection) => (
         <section key={collection.name}>
-          <h2 className="mb-6 text-2xl font-semibold tracking-tight text-center">
+          <h1 className="mb-6 text-2xl font-semibold tracking-tight text-center">
             {collection.name}
-          </h2>
+          </h1>
           <div className="flex flex-wrap gap-8 md:gap-16 justify-center pl-4">
             {collection.categories.map((category) => (
               <Link
@@ -30,19 +30,18 @@ export default async function Home() {
               >
                 <div className="h-[100px] w-[100x] sm:h-[200px] sm:w-[200px] rounded-lg border bg-muted">
                   <Image
-                    loading="eager"
+                    loading={imageCount++ < 15 ? "eager" : "lazy"}
                     decoding="sync"
                     src={category.image_url ?? "/placeholder.svg"}
                     alt={category.slug}
                     width={200}
                     height={200}
-                    priority={imageCount < 2}
                     className="h-full w-full flex-shrink-0 object-cover transition-transform duration-300 group-hover:scale-105"
-                    quality={65}
+                    quality={50}
                   />
                 </div>
                 <div className="mt-2">
-                  <h3 className="font-medium text-center">{category.name}</h3>
+                  <h2 className="font-medium text-center">{category.name}</h2>
                 </div>
               </Link>
             ))}
