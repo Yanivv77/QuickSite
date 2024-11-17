@@ -13,7 +13,7 @@ export function AddToCartForm({ productSlug }: { productSlug: string }) {
         className="max-w-[150px] rounded-[2px] bg-green-800 px-5 py-1 text-sm font-semibold text-white"
         aria-label="Add item to cart"
       >
-        Add to cart
+        הוספה לסל
       </button>
       {isPending && <p>Adding to cart...</p>}
       {!isPending && message && <p>{message}</p>}
