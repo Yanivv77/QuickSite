@@ -8,7 +8,14 @@ import {
   getSubcategoryProductCount,
   getCategory,
 } from "@/lib/queries"
-import { ChevronLeft } from 'lucide-react'
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
 
 export async function generateMetadata(props: {
   params: Promise<{ category: string; subcategory: string }>
@@ -62,31 +69,23 @@ export default async function Page(props: {
   return (
     <div className="min-h-screen bg-background" dir="rtl">
       <div className="container mx-auto px-16 py-16">
-        <nav className="flex mb-6" aria-label="Breadcrumb">
-          <ol className="inline-flex items-center space-x-1 md:space-x-3">
-            <li className="inline-flex items-center">
-              <Link href="/" className="text-sm font-medium text-muted-foreground hover:text-primary">
-                דף הבית
-              </Link>
-            </li>
-            <li>
-              <div className="flex items-center">
-                <ChevronLeft className="w-4 h-4 text-muted-foreground mx-2" />
-                <Link href={`/products/${category}`} className="text-sm font-medium text-muted-foreground hover:text-primary">
-                  {categoryData.name}
-                </Link>
-              </div>
-            </li>
-            <li>
-              <div className="flex items-center">
-                <ChevronLeft className="w-4 h-4 text-muted-foreground mx-2" />
-                <span className="text-sm font-medium text-foreground">
-                  {subcategoryData.name}
-                </span>
-              </div>
-            </li>
-          </ol>
-        </nav>
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/">דף הבית</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href={`/products/${category}`}>
+                {categoryData.name}
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{subcategoryData.name}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
 
         <h1 className="mb-8 text-3xl font-bold tracking-tight text-foreground">
           {subcategoryData.name}{' '}

@@ -1,14 +1,26 @@
-import { ProductLink } from "@/components/ui/product-card";
-import { db } from "@/db";
-import Image from "next/image";
-import { notFound } from "next/navigation";
-import { ne } from "drizzle-orm";
-import { AddToCartForm } from "@/components/add-to-cart-form";
+import { ProductLink } from "@/components/ui/product-card"
+import { db } from "@/db"
+import Image from "next/image"
+import { notFound } from "next/navigation"
+import { ne } from "drizzle-orm"
+import { AddToCartForm } from "@/components/add-to-cart-form"
+import { Metadata } from "next"
+import { Card, CardContent } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
+import Link from "next/link"
+import { ChevronLeft } from 'lucide-react'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
 
-// Add metadata generation to help with caching
 export async function generateMetadata({ params }: {
   params: { product: string }
-}) {
+}): Promise<Metadata> {
   const urlDecodedProduct = decodeURIComponent(params.product)
   const product = await db.query.products.findFirst({
     where: (products, { eq }) => eq(products.slug, urlDecodedProduct),
@@ -20,23 +32,29 @@ export async function generateMetadata({ params }: {
   }
 }
 
-// Add revalidation to cache the page
 export const revalidate = 3600 // Revalidate every hour
 
 export default async function Page(props: {
   params: Promise<{
-    product: string;
-    subcategory: string;
-    category: string;
-  }>;
+    product: string
+    subcategory: string
+    category: string
+  }>
 }) {
-  const { product, subcategory, category } = await props.params;
-  const urlDecodedProduct = decodeURIComponent(product);
-  const urlDecodedSubcategory = decodeURIComponent(subcategory);
-  // const urlDecodedCategory = decodeURIComponent(category);
+  const { product, subcategory, category } = await props.params
+  const urlDecodedProduct = decodeURIComponent(product)
+  const urlDecodedSubcategory = decodeURIComponent(subcategory)
+  const urlDecodedCategory = decodeURIComponent(category)
   const productData = await db.query.products.findFirst({
     where: (products, { eq }) => eq(products.slug, urlDecodedProduct),
-  });
+    with: {
+      subcategory: {
+        with: {
+          subcollection: true
+        }
+      }
+    },
+  })
   const related = await db.query.products.findMany({
     where: (products, { eq, and }) =>
       and(
@@ -46,48 +64,89 @@ export default async function Page(props: {
     with: {
       subcategory: true,
     },
-    limit: 5,
-  });
+    limit: 4,
+  })
   if (!productData) {
-    return notFound();
+    return notFound()
   }
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="border-t-2 pt-1 text-xl font-bold text-green-800">
-        {productData.name}
-      </h1>
-      <div className="flex flex-col gap-2">
-        <div className="flex flex-row gap-2">
-          <Image
-            src={productData.image_url ?? "/placeholder.svg?height=64&width=64"}
-            alt={`A small picture of ${productData.name}`}
-            quality={80}
-            height={256}
-            width={256}
-            className="h-64 w-64 flex-shrink-0 border-2"
-          />
-          <p className="flex-grow text-base">{productData.description}</p>
-        </div>
-        <p className="text-xl font-bold">${productData.price}</p>
-        <AddToCartForm productSlug={productData.slug} />
-      </div>
-      <div className="pt-8">
-        <h2 className="text-lg font-bold text-green-800">
-          Explore more products
-        </h2>
-        <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-4">
-          {related?.map((product) => (
-            <ProductLink
-              key={product.name}
-              category_slug={category}
-              subcategory_slug={subcategory}
-              product={product}
-              imageUrl={product.image_url}
-              loading="lazy"
+    <div className="min-h-screen bg-background" dir="rtl">
+      <div className="container mx-auto px-4 py-16">
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/">דף הבית</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator>
+              <ChevronLeft className="w-4 h-4" />
+            </BreadcrumbSeparator>
+            <BreadcrumbItem>
+              <BreadcrumbLink href={`/products/${urlDecodedCategory}`}>
+                {productData.subcategory.subcollection.name}
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator>
+              <ChevronLeft className="w-4 h-4" />
+            </BreadcrumbSeparator>
+            <BreadcrumbItem>
+              <BreadcrumbLink href={`/products/${urlDecodedCategory}/${urlDecodedSubcategory}`}>
+                {productData.subcategory.name}
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator>
+              <ChevronLeft className="w-4 h-4" />
+            </BreadcrumbSeparator>
+            <BreadcrumbItem>
+              <BreadcrumbPage>{productData.name}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+
+        <div className="grid grid-cols-1 md:grid-cols-2  mb-12 justify-items-center">
+            <Image
+              src={productData.image_url ?? "/placeholder.svg?height=600&width=600"}
+              alt={productData.name}
+              quality={75}
+              width={400}
+              height={500}
+              className="rounded-lg"
             />
+          
+          <div className="flex flex-col justify-center">
+            <div>
+              <h1 className="text-3xl font-bold text-foreground mb-4">
+                {productData.name}
+              </h1>
+              <p className="text-lg text-muted-foreground mb-6">{productData.description}</p>
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-primary mb-4">₪{productData.price}</p>
+              <AddToCartForm productSlug={productData.slug} />
+            </div>
+          </div>
+        </div>
+
+        <Separator className="my-12" />
+
+        <h2 className="text-2xl font-bold text-foreground mb-6">
+          מוצרים קשורים
+        </h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          {related?.map((product) => (
+            <Card key={product.name}>
+              <CardContent className="p-4">
+                <ProductLink
+                  category_slug={category}
+                  subcategory_slug={subcategory}
+                  product={product}
+                  imageUrl={product.image_url}
+                  loading="lazy"
+                />
+              </CardContent>
+            </Card>
           ))}
         </div>
       </div>
     </div>
-  );
+  )
 }

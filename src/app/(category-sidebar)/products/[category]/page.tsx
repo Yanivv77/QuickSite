@@ -4,7 +4,14 @@ import { notFound } from "next/navigation";
 import { getCategory, getCategoryProductCount } from "@/lib/queries";
 import { db } from "@/db";
 import { categories } from "@/db/schema";
-import { ChevronRight } from 'lucide-react';
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
 
 export async function generateStaticParams() {
   return await db.select({ category: categories.slug }).from(categories);
@@ -28,24 +35,17 @@ export default async function Page(props: {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       <div className="mx-auto max-w-screen-xl px-4 py-16 sm:pl-6 lg:px-16">
-        <nav className="flex mb-4" aria-label="Breadcrumb">
-          <ol className="inline-flex items-center space-x-1 md:space-x-3">
-            <li className="inline-flex items-center">
-              <Link href="/" className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600">
-                בית
-              </Link>
-            </li>
-            <li>
-              <div className="flex items-center">
-                <ChevronRight className="w-4 h-4 text-gray-400" />
-                <span className="ml-1 text-sm font-medium text-gray-500 md:ml-2">
-                  {cat.name}
-                  
-                </span>
-              </div>
-            </li>
-          </ol>
-        </nav>
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/">בית</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{cat.name}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
 
         <h1 className="mb-4 text-2xl font-bold tracking-tight text-gray-900 text-center">
           {cat.name}{' '}
