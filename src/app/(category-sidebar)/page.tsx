@@ -20,7 +20,7 @@ export default async function Home() {
           <h2 className="mb-6 text-2xl font-semibold tracking-tight text-center">
             {collection.name}
           </h2>
-          <div className="flex flex-wrap gap-16 justify-center">
+          <div className="flex flex-wrap gap-8 md:gap-16 justify-center pl-4">
             {collection.categories.map((category) => (
               <Link
                 prefetch={true}
@@ -28,7 +28,7 @@ export default async function Home() {
                 href={`/products/${category.slug}`}
                 className="group relative overflow-hidden"
               >
-                <div className="h-[200px] w-[200px] overflow-hidden rounded-lg border bg-muted">
+                <div className="h-[100px] w-[100x] sm:h-[200px] sm:w-[200px] rounded-lg border bg-muted">
                   <Image
                     loading={imageCount++ < 15 ? "eager" : "lazy"}
                     decoding="sync"
@@ -36,6 +36,7 @@ export default async function Home() {
                     alt={category.slug}
                     width={200}
                     height={200}
+                   
                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                     quality={65}
                   />

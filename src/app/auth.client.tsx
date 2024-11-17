@@ -1,4 +1,5 @@
 "use client";
+
 import { Input } from "@/components/ui/input";
 import {
   Popover,
@@ -26,8 +27,8 @@ export function LoginForm() {
   return (
     <Tabs defaultValue="signin" className="w-full">
       <TabsList className="grid w-full grid-cols-2 mb-4">
-        <TabsTrigger value="signin" aria-label="Switch to sign in form">Sign In</TabsTrigger>
-        <TabsTrigger value="signup" aria-label="Switch to sign up form">Sign Up</TabsTrigger>
+        <TabsTrigger value="signin" aria-label="Switch to sign in form">התחבר</TabsTrigger>
+        <TabsTrigger value="signup" aria-label="Switch to sign up form">הרשם</TabsTrigger>
       </TabsList>
 
       <TabsContent value="signin">
@@ -45,7 +46,7 @@ export function LoginForm() {
                 required
                 maxLength={50}
                 className="relative block w-full appearance-none rounded-[1px] border px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 sm:text-sm"
-                placeholder="Username"
+                placeholder="שם משתמש"
               />
             </div>
 
@@ -71,7 +72,7 @@ export function LoginForm() {
               formAction={signInFormAction}
               aria-label="Sign in to your account"
             >
-              {"Sign In"}
+              {"התחבר"}
             </Button>
           </div>
           {signInState?.error && (
@@ -95,7 +96,7 @@ export function LoginForm() {
                 required
                 maxLength={50}
                 className="relative block w-full appearance-none rounded-[1px] border px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 sm:text-sm"
-                placeholder="Username"
+                placeholder="שם משתמש"
               />
             </div>
 
@@ -103,13 +104,13 @@ export function LoginForm() {
               <div className="mt-1">
                 <Input
                   id="password"
-                  name="password"
+                  name="סיסמה"
                   aria-label="Password"
                   type="password"
                   required
                   maxLength={100}
                   className="relative block w-full appearance-none rounded-[1px] border px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 sm:text-sm"
-                  placeholder="Password"
+                  placeholder="סיסמה"
                 />
               </div>
             </div>
@@ -121,7 +122,7 @@ export function LoginForm() {
               formAction={signUpFormAction}
               aria-label="Create new account"
             >
-              {"Sign Up"}
+              {"הרשם"}
             </Button>
           </div>
           {signUpState?.error && (
@@ -143,7 +144,7 @@ export function SignInSignUp() {
       <svg viewBox="0 0 10 6" className="h-[6px] w-[10px]">
           <polygon points="0,0 5,6 10,0"></polygon>
         </svg>
-        Sign In{" "}
+        התחבר{" "}
         
       </PopoverTrigger>
       <PopoverContent className="px-8 py-4">
@@ -173,7 +174,7 @@ export function SignOut(props: { username: string }) {
             className="rounded-[2px] border-[1px] border-accent1 bg-white px-4 py-2 text-xs font-semibold text-accent1"
             aria-label="Sign out of your account"
           >
-            {"Sign Out"}
+            {"התנתק"}
           </Button>
         </form>
       </PopoverContent>

@@ -92,7 +92,7 @@ export const SidebarContent = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div 
     ref={ref} 
-    className={cn("flex-1 overflow-auto py-4", className)} 
+    className={cn("flex-1 overflow-auto py-4 text-center", className)} 
     {...props} 
   />
 ));
@@ -128,7 +128,7 @@ export const SidebarMenuButton = React.forwardRef<
         "hover:bg-gray-100 hover:text-gray-900",
         "transition-colors duration-200",
         "flex items-center gap-2",
-        isExpanded ? "justify-start" : "justify-center",
+        isExpanded ? "justify-start " : "justify-center ",
         className
       )}
       aria-label={typeof children === 'string' ? children : 'Menu item'}
@@ -159,7 +159,7 @@ export const SidebarMobile = React.forwardRef<
         <DialogPrimitive.Content
           ref={ref}
           className={cn(
-            "fixed inset-y-0 left-0 z-50 h-full w-3/4 max-w-sm bg-white shadow-xl",
+            "fixed inset-y-0 left-0 z-50 h-full w-32 max-w-sm bg-white shadow-xl",
             "data-[state=open]:animate-in data-[state=closed]:animate-out",
             "data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left",
             "duration-300",
@@ -170,7 +170,7 @@ export const SidebarMobile = React.forwardRef<
           <div className="flex h-full flex-col">
             <div className="flex items-center justify-between px-4 py-3 border-b">
               <DialogPrimitive.Title className="text-lg font-semibold">
-                Navigation
+                קטגוריות
               </DialogPrimitive.Title>
               <DialogPrimitive.Close 
                 className="rounded-full p-1 hover:bg-gray-100"

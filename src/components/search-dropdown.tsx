@@ -50,7 +50,7 @@ export function SearchDropdownComponent() {
     if (!params.product) {
       const subcategory = params.subcategory;
       setSearchTerm(
-        typeof subcategory === "string" ? subcategory.replaceAll("-", " ") : "",
+         ""
       );
     }
   }, [params]);
