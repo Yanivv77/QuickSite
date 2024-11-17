@@ -13,6 +13,16 @@ import { ProductSearchResult } from "@/app/api/search/route";
 
 type SearchResult = Product & { href: string };
 
+// Safe JSON parse wrapper
+const safeJsonParse = (str: string) => {
+  try {
+    return JSON.parse(str);
+  } catch (e) {
+    console.error('JSON Parse error:', e);
+    return null; // or return a default value
+  }
+}
+
 export function SearchDropdownComponent() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredItems, setFilteredItems] = useState<SearchResult[]>([]);
@@ -50,7 +60,7 @@ export function SearchDropdownComponent() {
     if (!params.product) {
       const subcategory = params.subcategory;
       setSearchTerm(
-         ""
+        typeof subcategory === "string" ? subcategory.replaceAll("-", " ") : "",
       );
     }
   }, [params]);
@@ -96,7 +106,7 @@ export function SearchDropdownComponent() {
         <div className="relative">
           <Input
             ref={inputRef}
-            autoCapitalize="off"
+            autoCapitalize="none"
             autoCorrect="off"
             type="text"
             placeholder="חיפוש..."

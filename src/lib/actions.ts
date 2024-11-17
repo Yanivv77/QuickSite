@@ -34,7 +34,7 @@ export async function addToCart(prevState: unknown, formData: FormData) {
     await updateCart(newCart);
   }
 
-  return "Item added to cart";
+  return "הוסף לסל";
 }
 
 export async function removeFromCart(formData: FormData) {

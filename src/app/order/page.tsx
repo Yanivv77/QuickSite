@@ -1,45 +1,57 @@
-import { Metadata } from "next";
-import { Suspense } from "react";
-import { CartItems, TotalCost } from "./dynamic";
-import { PlaceOrderAuth } from "../auth.server";
+import { Metadata } from "next"
+import { Suspense } from "react"
+import { CartItems, TotalCost } from "./dynamic"
+import { PlaceOrderAuth } from "../auth.server"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { PaymentComponent } from "./playment"
+
 
 export const metadata: Metadata = {
-  title: "Order",
-};
+  title: "הזמנה",
+}
 
 export default async function Page() {
   return (
-    <main className="min-h-screen sm:p-4">
-      <div className="container mx-auto p-1 sm:p-3">
-        <div className="flex items-center justify-between border-b border-gray-200">
-          <h1 className="text-2xl text-accent1">Order</h1>
-        </div>
-
-        <div className="flex grid-cols-3 flex-col gap-8 pt-4 lg:grid">
-          <div className="col-span-2">
-            <Suspense>
-              <CartItems />
-            </Suspense>
-          </div>
-
-          <div className="space-y-4">
-            <div className="rounded bg-gray-100 p-4">
-              <p className="font-semibold">
-                Merchandise{" "}
-                <Suspense>
-                  <TotalCost />
+    <main className="min-h-screen bg-background p-8 md:p-16" dir="rtl">
+      <div className="container mx-auto">
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="text-3xl font-bold text-primary">הזמנה</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-8 lg:grid-cols-3">
+              <div className="lg:col-span-2">
+                <Suspense fallback={<div className="text-center">טוען פריטים...</div>}>
+                  <CartItems />
                 </Suspense>
-              </p>
-              <p className="text-sm text-gray-500">
-                Applicable shipping and tax will be added.
-              </p>
+              </div>
+
+              <div className="space-y-6">
+                <Card>
+                  <CardContent className="p-6">
+                    <h2 className="mb-4 text-xl font-semibold">סיכום הזמנה</h2>
+                    <div className="flex justify-between">
+                      <p className="font-medium">סה"כ מוצרים:</p>
+                      <Suspense fallback={<div>טוען...</div>}>
+                        <TotalCost />
+                      </Suspense>
+                    </div>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      המחיר הסופי כולל משלוח ומיסים
+                    </p>
+                  </CardContent>
+                </Card>
+                
+                <PaymentComponent />
+                
+                <Suspense fallback={<div className="text-center">טוען...</div>}>
+                  <PlaceOrderAuth />
+                </Suspense>
+              </div>
             </div>
-            <Suspense>
-              <PlaceOrderAuth />
-            </Suspense>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
     </main>
-  );
+  )
 }

@@ -15,7 +15,7 @@ export function AddToCartForm({ productSlug }: { productSlug: string }) {
       >
         הוספה לסל
       </button>
-      {isPending && <p>Adding to cart...</p>}
+      {isPending && <p>הוספה לסל...</p>}
       {!isPending && message && <p>{message}</p>}
     </form>
   );
