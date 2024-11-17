@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { getRandomProducts } from "@/db/products"
 import { cache } from 'react'
+import Link from "next/link"
+import { ProductLink } from './ui/product-card'
 
 // Cache the random products fetch
 const getRandomProductsCached = cache(async () => {
@@ -14,21 +16,24 @@ export default async function Hero() {
   const randomProducts = await getRandomProductsCached()
 
   return (
-    <div className="from-primary/5 to-secondary/5 text-right" dir="rtl">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+    <section 
+      className=" text-right overflow-hidden" 
+      dir="rtl"
+    >
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
           <div className="flex-1 space-y-6">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight tracking-tight">
               גלה את
               <span className="block text-primary mt-1">הספר הבא שלך</span>
             </h1>
-            <p className="text-lg text-muted-foreground max-w-xl">
-            גלה את האוסף שלנו המונה 14,034 ספרים מוקפדים, מהקלאסיקות הנצחיות ועד לרבי המכר העכשוויים.
+            <p className="text-lg text-muted-foreground max-w-xl leading-relaxed">
+              גלה את האוסף שלנו המונה 14,034 ספרים מוקפדים, מהקלאסיקות הנצחיות ועד לרבי המכר העכשוויים.
             </p>
             <div className="flex flex-wrap gap-4">
               <Button 
                 size="lg" 
-                className="group"
+                className="group relative overflow-hidden transform transition-all duration-300 hover:scale-105"
                 aria-label="התחל לקנות ספרים"
               >
                 התחל לקנות
@@ -40,44 +45,42 @@ export default async function Hero() {
               <Button 
                 size="lg" 
                 variant="outline"
+                className="transform transition-all duration-300 hover:scale-105"
                 aria-label="גלה קטגוריות ספרים"
               >
                 גלה קטגוריות
               </Button>
             </div>
           </div>
-          <div className="flex-1 relative w-full max-w-md" role="complementary" aria-label="תצוגת ספרים אקראית">
-            <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-secondary/10 rounded-xl transform rotate-2"></div>
-            <div className="relative grid grid-cols-2 gap-3 p-3 bg-background rounded-xl shadow-lg">
+
+          <div 
+            className="flex-1 relative w-full max-w-md perspective-1000"
+            role="complementary" 
+            aria-label="תצוגת ספרים אקראית"
+          >
+            <div 
+              className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-secondary/10 rounded-xl transform rotate-2 blur-[1px]"
+              aria-hidden="true"
+            />
+            <div className="relative grid grid-cols-2 gap-8 p-4 bg-background/95 backdrop-blur-sm rounded-xl shadow-lg">
               {randomProducts.map((product) => (
-                <div 
-                  key={product.slug} 
-                  className="aspect-[3/4] overflow-hidden rounded-md shadow-sm transition-transform duration-300 hover:scale-105 hover:shadow-md"
-                  role="img"
-                  aria-label={`תמונת הספר ${product.name}`}
-                >
-                  <Image
-                    src={product.image_url ?? "/placeholder.svg?height=400&width=300"}
-                    alt={`תמונת הספר ${product.name}`}
-                    width={300}
-                    height={400}
-                    priority={true}
+                <div key={product.slug} className="group relative flex flex-col">
+                  <ProductLink
+                    key={product.name}
+                    category_slug={product.category_slug ?? ""}
+                    subcategory_slug={product.subcategory_slug}
+                    product={product}
+                    imageUrl={product.image_url}
                     loading="eager"
-                    className="object-cover w-full h-full"
-                    quality={65}
-                    sizes="(max-width: 768px) 150px, 300px"
                   />
+                
+               
                 </div>
               ))}
             </div>
           </div>
         </div>
-        <div className="mt-8 flex justify-between items-center text-sm text-muted-foreground" role="list" aria-label="יתרונות הקנייה">
-          <p role="listitem">ספריים דיגיטאלים</p>
-          <p role="listitem">משלוח מיידי</p>
-          <p role="listitem">תשלום מאובטח</p>
-        </div>
       </div>
-    </div>
+    </section>
   )
 }

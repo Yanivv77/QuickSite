@@ -28,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="he" className={`h-full ${GeistSans.variable} ${GeistMono.variable}`} dir="rtl">
+    <html lang="he" className={`h-full ${GeistSans.variable} ${GeistMono.variable} bg-gradient-to-b from-primary/5 to-secondary/5`} dir="rtl">
       <body className="flex min-h-screen flex-col antialiased">
         <Header />
         <main className="flex-1">

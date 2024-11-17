@@ -1,20 +1,20 @@
 "use client";
-import { Link } from "@/components/ui/link";
 import NextImage from "next/image";
 import { getImageProps } from "next/image";
 import { Product } from "@/db/schema";
 import { useEffect } from "react";
+import Link from "next/link";
 
 export function getProductLinkImageProps(
   imageUrl: string,
   productName: string,
 ) {
   return getImageProps({
-    width: 48,
-    height: 48,
-    quality: 65,
+    width: 300,
+    height: 400,
+    quality: 75,
     src: imageUrl,
-    alt: `A small picture of ${productName}`,
+    alt: `תמונת הספר ${productName}`,
   });
 }
 
@@ -27,24 +27,21 @@ export function ProductLink(props: {
 }) {
   const { category_slug, subcategory_slug, product, imageUrl } = props;
 
-  // prefetch the main image for the product page, if this is too heavy
-  // we could only prefetch the first few cards, then prefetch on hover
+  // Prefetch the main image for the product page
   const prefetchProps = getImageProps({
-    height: 256,
+    height: 400,
     quality: 80,
-    width: 256,
-    src: imageUrl ?? "/placeholder.svg?height=64&width=64",
-    alt: `A small picture of ${product.name}`,
+    width: 300,
+    src: imageUrl ?? "/placeholder.svg?height=400&width=300",
+    alt: `תמונת הספר ${product.name}`,
   });
+
   useEffect(() => {
     try {
       const iprops = prefetchProps.props;
       const img = new Image();
-      // Don't interfer with important requests
       img.fetchPriority = "low";
-      // Don't block the main thread with prefetch images
       img.decoding = "async";
-      // Order is important here, sizes must be set before srcset, srcset must be set before src
       if (iprops.sizes) img.sizes = iprops.sizes;
       if (iprops.srcSet) img.srcset = iprops.srcSet;
       if (iprops.src) img.src = iprops.src;
@@ -52,30 +49,37 @@ export function ProductLink(props: {
       console.error("failed to preload", prefetchProps.props.src, e);
     }
   }, [prefetchProps]);
+
   return (
     <Link
       prefetch={true}
-      className="group flex h-[130px] w-full flex-row border px-4 py-2 hover:bg-gray-100 sm:w-[250px]"
+      className="group relative flex flex-col"
       href={`/products/${category_slug}/${subcategory_slug}/${product.slug}`}
     >
-      <div className="py-2">
+      <div 
+        className="aspect-[3/4] overflow-hidden rounded-lg shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md"
+        role="img"
+        aria-label={`תמונת הספר ${product.name}`}
+      >
         <NextImage
           loading={props.loading}
           decoding="sync"
-          src={imageUrl ?? "/placeholder.svg?height=48&width=48"}
-          alt={`A small picture of ${product.name}`}
-          width={40}
-          height={48}
-          quality={65}
-          className="h-auto w-12 flex-shrink-0 object-cover"
+          src={imageUrl ?? "/placeholder.svg?height=400&width=300"}
+          alt={`תמונת הספר ${product.name}`}
+          width={300}
+          height={400}
+          quality={75}
+          className="object-cover w-full h-full transform transition-transform duration-500 group-hover:scale-110"
+          sizes="(max-width: 768px) 150px, 300px"
         />
       </div>
-      <div className="px-2" />
-      <div className="h-26 flex flex-grow flex-col items-start py-2">
-        <div className="text-sm font-medium text-gray-700 group-hover:underline">
+      <div className="mt-2 space-y-1 text-right" dir="rtl">
+        <h3 className="font-medium text-sm line-clamp-1 text-foreground group-hover:underline">
           {product.name}
-        </div>
-        <p className="overflow-hidden text-xs">{product.description}</p>
+        </h3>
+        <p className="text-xs text-muted-foreground line-clamp-1">
+          {product.author}
+        </p>
       </div>
     </Link>
   );
