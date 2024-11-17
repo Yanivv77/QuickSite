@@ -10,9 +10,9 @@ export function getProductLinkImageProps(
   productName: string,
 ) {
   return getImageProps({
-    width: 300,
-    height: 400,
-    quality: 75,
+    width: 150,
+    height: 200,
+    quality: 65,
     src: imageUrl,
     alt: `תמונת הספר ${productName}`,
   });
@@ -23,15 +23,17 @@ export function ProductLink(props: {
   category_slug: string;
   subcategory_slug: string;
   loading: "eager" | "lazy";
+  priority?: boolean;
+  isHero?: boolean;
   product: Product;
 }) {
   const { category_slug, subcategory_slug, product, imageUrl } = props;
 
   // Prefetch the main image for the product page
   const prefetchProps = getImageProps({
-    height: 400,
-    quality: 80,
-    width: 300,
+    height: 200,
+    quality: 65,
+    width: 150,
     src: imageUrl ?? "/placeholder.svg?height=400&width=300",
     alt: `תמונת הספר ${product.name}`,
   });
@@ -61,16 +63,17 @@ export function ProductLink(props: {
         role="img"
         aria-label={`תמונת הספר ${product.name}`}
       >
-        <NextImage
+  <NextImage
           loading={props.loading}
           decoding="sync"
+          fetchPriority={props.isHero ? "high" : "auto"}
+          priority={props.isHero ? true : props.priority}
           src={imageUrl ?? "/placeholder.svg?height=400&width=300"}
           alt={`תמונת הספר ${product.name}`}
-          width={300}
-          height={400}
-          quality={75}
+          width={150}
+          height={200}
+          quality={65}
           className="object-cover w-full h-full transform transition-transform duration-500 group-hover:scale-110"
-          sizes="(max-width: 768px) 150px, 300px"
         />
       </div>
       <div className="mt-2 space-y-1 text-right" dir="rtl">

@@ -104,6 +104,7 @@ export default async function Page(props: {
 
         <div className="grid grid-cols-1 md:grid-cols-2  mb-12 justify-items-center">
             <Image
+              priority={true}
               src={productData.image_url ?? "/placeholder.svg?height=600&width=600"}
               alt={productData.name}
               quality={75}

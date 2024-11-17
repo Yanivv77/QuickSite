@@ -36,13 +36,15 @@ export default async function CollectionPage(props: {
                     >
                       <div className="w-40 h-40 mb-6 overflow-hidden rounded-full">
                         <Image
-                          loading={imageCount++ < 15 ? "eager" : "lazy"}
+                          priority={imageCount < 4}
+                          loading={imageCount++ < 8 ? "eager" : "lazy"}
                           src={category.image_url ?? "/placeholder.svg"}
                           alt={category.name}
-                          className="object-cover w-full h-full"
+                          className="object-cover flex-shrink-0 w-full h-full"
                           width={160}
                           height={160}
-                          quality={85}
+                          quality={65}
+                          sizes="160px"
                         />
                       </div>
                       <span className="text-lg font-medium text-foreground">{category.name}</span>

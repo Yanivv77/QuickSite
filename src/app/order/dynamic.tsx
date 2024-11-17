@@ -30,6 +30,7 @@ function CartItem({ product }: { product: CartItem }) {
       <div className="flex items-center space-x-4 space-x-reverse">
         <div className=" overflow-hidden rounded-md bg-secondary">
           <Image
+            priority={true}
             src={product.image_url ?? "/placeholder.svg"}
             alt={product.name}
             width={150}

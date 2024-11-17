@@ -30,14 +30,14 @@ export default async function Home() {
               >
                 <div className="h-[100px] w-[100x] sm:h-[200px] sm:w-[200px] rounded-lg border bg-muted">
                   <Image
-                    loading={imageCount++ < 15 ? "eager" : "lazy"}
+                    loading="eager"
                     decoding="sync"
                     src={category.image_url ?? "/placeholder.svg"}
                     alt={category.slug}
                     width={200}
                     height={200}
-                   
-                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    priority={imageCount < 2}
+                    className="h-full w-full flex-shrink-0 object-cover transition-transform duration-300 group-hover:scale-105"
                     quality={65}
                   />
                 </div>
