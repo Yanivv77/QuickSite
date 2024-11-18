@@ -12,14 +12,14 @@ export function getProductLinkImageProps(
   isHero?: boolean
 ) {
   return getImageProps({
-    width: isHero ? 300 : 150,
-    height: isHero ? 400 : 200,
-    quality: isHero ? 85 : 75,
+    width: isHero ? 300 : 200,
+    height: isHero ? 450 : 300,
+    quality: isHero ? 75 : 60,
     src: imageUrl,
     alt: `תמונת הספר ${productName}`,
     sizes: isHero 
-      ? "(max-width: 768px) 100vw, 300px"
-      : "(max-width: 768px) 50vw, 150px",
+      ? "(max-width: 640px) 80vw, (max-width: 768px) 45vw, 300px"
+      : "(max-width: 640px) 45vw, (max-width: 768px) 30vw, 200px",
     loading: "eager",
     priority: true,
   });
@@ -38,11 +38,12 @@ export function ProductLink(props: {
 
   // Prefetch the main image for the product page
   const prefetchProps = getImageProps({
-    height: 200,
-    quality: 65,
-    width: 150,
-    src: imageUrl ?? "/placeholder.svg?height=400&width=300",
+    width: 200,
+    height: 300,
+    quality: 60,
+    src: imageUrl ?? "/placeholder.svg",
     alt: `תמונת הספר ${product.name}`,
+    sizes: "(max-width: 768px) 50vw, 200px",
   });
 
   useEffect(() => {
@@ -66,21 +67,21 @@ export function ProductLink(props: {
       href={`/products/${category_slug}/${subcategory_slug}/${product.slug}`}
     >
       <div 
-        className="aspect-[3/4] overflow-hidden rounded-lg shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md"
+        className="aspect-[2/3] overflow-hidden rounded-lg shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md"
         role="img"
         aria-label={`תמונת הספר ${product.name}`}
       >
-  <NextImage
+        <NextImage
           {...getProductLinkImageProps(
-            imageUrl ?? "/placeholder.svg?height=400&width=300",
+            imageUrl ?? "/placeholder.svg",
             product.name,
             props.isHero
           )}
           loading={props.loading}
           decoding="sync"
-          fetchPriority={props.isHero ? "high" : "auto"}
+          fetchPriority={"high"}
           priority={props.isHero ? true : props.priority}
-          src={imageUrl ?? "/placeholder.svg?height=400&width=300"}
+          src={imageUrl ?? "/placeholder.svg"}
           alt={`תמונת הספר ${product.name}`}
           width={150}
           height={200}

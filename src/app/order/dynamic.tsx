@@ -28,14 +28,14 @@ function CartItem({ product }: { product: CartItem }) {
   return (
     <div className="flex items-center justify-between border-b border-border py-4">
       <div className="flex items-center space-x-4 space-x-reverse">
-        <div className=" overflow-hidden rounded-md bg-secondary">
+        <div className="h-[225px] w-[150px] overflow-hidden rounded-md bg-secondary">
           <Image
             loading="eager"
             decoding="sync"
             src={product.image_url ?? "/placeholder.svg"}
             alt={product.name}
             width={150}
-            height={200}
+            height={225}
             className="h-full w-full object-cover"
             quality={65}
           />

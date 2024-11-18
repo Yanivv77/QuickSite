@@ -8,7 +8,7 @@ export default async function Home() {
   const [collections] = await Promise.all([
     getCollections(),
   ]);
-  let imageCount = 0;
+
 
   return (
     <div className="flex flex-col gap-8">
@@ -36,6 +36,7 @@ export default async function Home() {
                     height={200}
                     className="h-full w-full flex-shrink-0 object-cover transition-transform duration-300 group-hover:scale-105"
                     quality={65}
+                    sizes="(max-width: 640px) 100px, 200px"
                   />
                 </div>
                 <div className="mt-2">

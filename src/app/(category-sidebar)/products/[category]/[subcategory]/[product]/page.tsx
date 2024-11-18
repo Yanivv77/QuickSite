@@ -5,8 +5,16 @@ import { AddToCartForm } from "@/components/add-to-cart-form"
 import { Metadata } from "next"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
 
-import { getProductDetails, getProductsForSubcategoryLimited } from "@/lib/queries";
+import { getProductDetails, getProductsForSubcategoryLimited, getCategory, getSubcategory } from "@/lib/queries";
 
 export async function generateMetadata(props: {
   params: Promise<{ product: string; category: string; subcategory: string }>;
@@ -37,14 +45,19 @@ export default async function Page(props: {
   const { product, subcategory, category } = await props.params;
   const urlDecodedProduct = decodeURIComponent(product);
   const urlDecodedSubcategory = decodeURIComponent(subcategory);
-  const [productData, relatedUnshifted] = await Promise.all([
+  const urlDecodedCategory = decodeURIComponent(category);
+
+  const [productData, relatedUnshifted, subcategoryData, categoryData] = await Promise.all([
     getProductDetails(urlDecodedProduct),
     getProductsForSubcategoryLimited(urlDecodedSubcategory),
+    getSubcategory(urlDecodedSubcategory),
+    getCategory(urlDecodedCategory),
   ]);
 
-  if (!productData) {
+  if (!productData || !subcategoryData || !categoryData) {
     return notFound();
   }
+
   const currentProductIndex = relatedUnshifted.findIndex(
     (p) => p.slug === productData.slug,
   );
@@ -55,7 +68,31 @@ export default async function Page(props: {
   return (
     <div className="min-h-screen bg-background" dir="rtl">
       <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2  mb-12 justify-items-center">
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/">דף הבית</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href={`/products/${category}`}>
+                {categoryData.name}
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href={`/products/${category}/${subcategory}`}>
+                {subcategoryData.name}
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{productData.name}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 mb-12 justify-items-center">
             <Image
               priority={true}
               loading="eager"
