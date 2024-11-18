@@ -151,7 +151,7 @@ export function SearchDropdownComponent() {
                         className="h-10 w-10 pr-2"
                         height={40}
                         width={40}
-                        quality={40}
+                        quality={65}
                       />
                       <span className="text-sm">{item.name}</span>
                     </div>

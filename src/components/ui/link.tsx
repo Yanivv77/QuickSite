@@ -24,7 +24,7 @@ async function prefetchImages(href: string) {
   const imageResponse = await fetch(`/api/prefetch-images${url.pathname}`, {
     priority: "low",
   });
-  // only throw in dev
+
   if (!imageResponse.ok && process.env.NODE_ENV === "development") {
     throw new Error("Failed to prefetch images");
   }
@@ -39,7 +39,7 @@ export const Link: typeof NextLink = (({ children, ...props }) => {
   const [preloading, setPreloading] = useState<(() => void)[]>([]);
   const linkRef = useRef<HTMLAnchorElement>(null);
   const router = useRouter();
-  let prefetchTimeout: NodeJS.Timeout | null = null; // Track the timeout ID
+  let prefetchTimeout: ReturnType<typeof setTimeout> | null = null;
 
   useEffect(() => {
     if (props.prefetch === false) {
@@ -53,37 +53,33 @@ export const Link: typeof NextLink = (({ children, ...props }) => {
       (entries) => {
         const entry = entries[0];
         if (entry.isIntersecting) {
-          // Set a timeout to trigger prefetch after 1 second
           prefetchTimeout = setTimeout(async () => {
             router.prefetch(String(props.href));
-            await sleep(0); // We want the doc prefetches to happen first.
-            void prefetchImages(String(props.href)).then((images) => {
-              setImages(images);
-            }, console.error);
-            // Stop observing once images are prefetched
+            await sleep(0);
+            const fetchedImages = await prefetchImages(String(props.href));
+            setImages(fetchedImages);
             observer.unobserve(entry.target);
-          }, 300); // 300ms delay
+          }, 300);
         } else if (prefetchTimeout) {
-          // If the element leaves the viewport before 1 second, cancel the prefetch
           clearTimeout(prefetchTimeout);
           prefetchTimeout = null;
         }
       },
-      { rootMargin: "0px", threshold: 0.1 }, // Trigger when at least 10% is visible
+      { rootMargin: "0px", threshold: 0.1 }
     );
 
     observer.observe(linkElement);
 
     return () => {
-      observer.disconnect(); // Cleanup the observer when the component unmounts
+      observer.disconnect();
       if (prefetchTimeout) {
-        clearTimeout(prefetchTimeout); // Clear any pending timeouts when component unmounts
+        clearTimeout(prefetchTimeout);
       }
     };
-  }, [props.href, props.prefetch]);
+  }, [props.href, props.prefetch, router]);
 
   return (
-    <NextLink 
+    <NextLink
       ref={linkRef}
       prefetch={false}
       onMouseEnter={() => {
@@ -97,9 +93,7 @@ export const Link: typeof NextLink = (({ children, ...props }) => {
         setPreloading(p);
       }}
       onMouseLeave={() => {
-        for (const remove of preloading) {
-          remove();
-        }
+        preloading.forEach((remove) => remove());
         setPreloading([]);
       }}
       onMouseDown={(e) => {
@@ -140,8 +134,9 @@ function prefetchImage(image: PrefetchImage) {
     done = true;
   };
   return () => {
-    if (done) return;
-    img.src = img.srcset = "";
-    seen.delete(image.srcset);
+    if (!done) {
+      img.src = img.srcset = "";
+      seen.delete(image.srcset);
+    }
   };
 }

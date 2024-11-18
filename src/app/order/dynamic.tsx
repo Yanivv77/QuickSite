@@ -1,7 +1,7 @@
 import { cache } from "react"
 import { detailedCart } from "@/lib/cart"
 import { Link } from "@/components/ui/link"
-import Image from "next/image"
+import Image from "next/image";
 import { removeFromCart } from "@/lib/actions"
 import { Trash2 } from 'lucide-react'
 import { Button } from "@/components/ui/button"
@@ -37,7 +37,7 @@ function CartItem({ product }: { product: CartItem }) {
             width={150}
             height={200}
             className="h-full w-full object-cover"
-            
+            quality={65}
           />
         </div>
         <div>

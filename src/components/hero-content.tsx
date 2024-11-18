@@ -12,25 +12,7 @@ export function HeroContent() {
         גלה את האוסף שלנו המונה 14,034 ספרים מוקפדים, מהקלאסיקות הנצחיות ועד לרבי המכר העכשוויים.
       </p>
       <div className="flex flex-wrap gap-4">
-        <Button 
-          size="lg" 
-          className="group relative overflow-hidden transform transition-all duration-300 hover:scale-105"
-          aria-label="התחל לקנות ספרים"
-        >
-          התחל לקנות
-          <ArrowLeft 
-            className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" 
-            aria-hidden="true"
-          />
-        </Button>
-        <Button 
-          size="lg" 
-          variant="outline"
-          className="transform transition-all duration-300 hover:scale-105"
-          aria-label="גלה קטגוריות ספרים"
-        >
-          גלה קטגוריות
-        </Button>
+     
       </div>
     </div>
   )

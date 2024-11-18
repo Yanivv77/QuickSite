@@ -25,7 +25,8 @@ export default async function Page(props: {
   const { category } = await props.params;
   const urlDecoded = decodeURIComponent(category);
   const cat = await getCategory(urlDecoded);
-  
+  let imageCount = 0
+
   if (!cat) {
     notFound();
   }
@@ -71,13 +72,13 @@ export default async function Page(props: {
                 >
                   <div className="aspect-square overflow-hidden">
                     <Image
-                      loading="eager"
+                      loading={imageCount++ < 10 ? "eager" : "lazy"}
                       decoding="sync"
                       src={subcategory.image_url ?? "/placeholder.svg"}
                       alt={subcategory.name}
                       width={300}
                       height={300}
-                      quality={50}
+                      quality={65}
                      className="h-full w-full flex-shrink-0 object-cover transition-transform duration-300 group-hover:scale-105"
                     />
                   </div>

@@ -2,7 +2,6 @@ import { Footer } from "@/components/footer";
 import Hero from "@/components/hero";
 import { Link } from "@/components/ui/link";
 import { getCollections, getProductCount } from "@/lib/queries";
-
 import Image from "next/image";
 
 export default async function Home() {
@@ -18,7 +17,7 @@ export default async function Home() {
       {collections.map((collection) => (
         <section key={collection.name}>
           <h1 className="mb-6 text-2xl font-semibold tracking-tight text-center">
-            {collection.name}
+            {collection.name} {productCount.at(0)?.count.toLocaleString()} מוצרים
           </h1>
           <div className="flex flex-wrap gap-8 md:gap-16 justify-center pl-4">
             {collection.categories.map((category) => (
@@ -30,14 +29,14 @@ export default async function Home() {
               >
                 <div className="h-[100px] w-[100x] sm:h-[200px] sm:w-[200px] rounded-lg border bg-muted">
                   <Image
-                    loading={imageCount++ < 15 ? "eager" : "lazy"}
+                    loading={imageCount++ < 8 ? "eager" : "lazy"}
                     decoding="sync"
                     src={category.image_url ?? "/placeholder.svg"}
                     alt={category.slug}
                     width={200}
                     height={200}
                     className="h-full w-full flex-shrink-0 object-cover transition-transform duration-300 group-hover:scale-105"
-                    quality={50}
+                    quality={65}
                   />
                 </div>
                 <div className="mt-2">

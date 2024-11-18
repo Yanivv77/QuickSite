@@ -1,114 +1,67 @@
 import { ProductLink } from "@/components/ui/product-card"
-import { db } from "@/db"
-import Image from "next/image"
+import Image from "next/image";
 import { notFound } from "next/navigation"
-import { ne } from "drizzle-orm"
 import { AddToCartForm } from "@/components/add-to-cart-form"
 import { Metadata } from "next"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 
-import { ChevronLeft } from 'lucide-react'
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
+import { getProductDetails, getProductsForSubcategory } from "@/lib/queries";
 
-export async function generateMetadata({ params }: {
-  params: { product: string }
+export async function generateMetadata(props: {
+  params: Promise<{ product: string; category: string; subcategory: string }>;
 }): Promise<Metadata> {
-  const urlDecodedProduct = decodeURIComponent(params.product)
-  const product = await db.query.products.findFirst({
-    where: (products, { eq }) => eq(products.slug, urlDecodedProduct),
-  })
-  
-  return {
-    title: product?.name,
-    description: product?.description,
+  const { product: productParam } = await props.params;
+  const urlDecodedProduct = decodeURIComponent(productParam);
+
+  const product = await getProductDetails(urlDecodedProduct);
+
+  if (!product) {
+    return notFound();
   }
+
+  return {
+    openGraph: { title: product.name, description: product.description },
+  };
 }
 
-export const revalidate = 3600 // Revalidate every hour
+export const revalidate = 3600 
 
 export default async function Page(props: {
   params: Promise<{
-    product: string
-    subcategory: string
-    category: string
-  }>
+    product: string;
+    subcategory: string;
+    category: string;
+  }>;
 }) {
-  const { product, subcategory, category } = await props.params
-  const urlDecodedProduct = decodeURIComponent(product)
-  const urlDecodedSubcategory = decodeURIComponent(subcategory)
-  const urlDecodedCategory = decodeURIComponent(category)
-  const productData = await db.query.products.findFirst({
-    where: (products, { eq }) => eq(products.slug, urlDecodedProduct),
-    with: {
-      subcategory: {
-        with: {
-          subcollection: true
-        }
-      }
-    },
-  })
-  const related = await db.query.products.findMany({
-    where: (products, { eq, and }) =>
-      and(
-        eq(products.subcategory_slug, urlDecodedSubcategory),
-        ne(products.slug, urlDecodedProduct),
-      ),
-    with: {
-      subcategory: true,
-    },
-    limit: 4,
-  })
+  const { product, subcategory, category } = await props.params;
+  const urlDecodedProduct = decodeURIComponent(product);
+  const urlDecodedSubcategory = decodeURIComponent(subcategory);
+  const [productData, relatedUnshifted] = await Promise.all([
+    getProductDetails(urlDecodedProduct),
+    getProductsForSubcategory(urlDecodedSubcategory),
+  ]);
+
   if (!productData) {
-    return notFound()
+    return notFound();
   }
+  const currentProductIndex = relatedUnshifted.findIndex(
+    (p) => p.slug === productData.slug,
+  );
+  const related = [
+    ...relatedUnshifted.slice(currentProductIndex + 1),
+    ...relatedUnshifted.slice(0, currentProductIndex),
+  ];
   return (
     <div className="min-h-screen bg-background" dir="rtl">
       <div className="container mx-auto px-4 py-16">
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/">דף הבית</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator>
-              <ChevronLeft className="w-4 h-4" />
-            </BreadcrumbSeparator>
-            <BreadcrumbItem>
-              <BreadcrumbLink href={`/products/${urlDecodedCategory}`}>
-                {productData.subcategory.subcollection.name}
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator>
-              <ChevronLeft className="w-4 h-4" />
-            </BreadcrumbSeparator>
-            <BreadcrumbItem>
-              <BreadcrumbLink href={`/products/${urlDecodedCategory}/${urlDecodedSubcategory}`}>
-                {productData.subcategory.name}
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator>
-              <ChevronLeft className="w-4 h-4" />
-            </BreadcrumbSeparator>
-            <BreadcrumbItem>
-              <BreadcrumbPage>{productData.name}</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-
         <div className="grid grid-cols-1 md:grid-cols-2  mb-12 justify-items-center">
             <Image
               loading="eager"
               decoding="sync"
               src={productData.image_url ?? "/placeholder.svg?height=600&width=600"}
               alt={productData.name}
-              quality={60}
+              quality={65}
               width={400}
               height={500}
               className="rounded-lg"
@@ -138,11 +91,12 @@ export default async function Page(props: {
             <Card key={product.name}>
               <CardContent className="p-4">
                 <ProductLink
+                  key={product.slug}
+                  loading="lazy"
                   category_slug={category}
                   subcategory_slug={subcategory}
                   product={product}
                   imageUrl={product.image_url}
-                  loading="lazy"
                 />
               </CardContent>
             </Card>
