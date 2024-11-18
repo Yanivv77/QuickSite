@@ -5,7 +5,6 @@ import {
   products,
   subcategories,
   subcollections,
-  collections,
   users,
 } from "@/db/schema";
 import { db } from "@/db";
@@ -55,6 +54,20 @@ export const getProductsForSubcategory = unstable_cache(
   ["subcategory-products"],
   {
     revalidate: 60 * 60 * 2, // two hours,
+  },
+);
+
+export const getProductsForSubcategoryLimited = unstable_cache(
+  (subcategorySlug: string) =>
+    db.query.products.findMany({
+      where: (products, { eq, and }) =>
+        and(eq(products.subcategory_slug, subcategorySlug)),
+      orderBy: (products, { asc }) => asc(products.slug),
+      limit: 5, 
+    }),
+  ["subcategory-products-limited"],
+  {
+    revalidate: 60 * 60 * 2, // two hours
   },
 );
 
@@ -127,14 +140,6 @@ export const getCollectionDetails = unstable_cache(
   },
 );
 
-export const getCollectionCount = unstable_cache(
-  () => db.select({ count: count() }).from(collections),
-  ["total-collections-count"],
-  {
-    revalidate: 60 * 60 * 2, // two hours,
-  },
-);
-
 export const getProductCount = unstable_cache(
   () => db.select({ count: count() }).from(products),
   ["total-product-count"],
@@ -142,7 +147,6 @@ export const getProductCount = unstable_cache(
     revalidate: 60 * 60 * 2, // two hours,
   },
 );
-
 
 // could be optimized by storing category slug on the products table
 export const getCategoryProductCount = unstable_cache(
@@ -173,6 +177,18 @@ export const getSubcategoryProductCount = unstable_cache(
       .from(products)
       .where(eq(products.subcategory_slug, subcategorySlug)),
   ["subcategory-product-count"],
+  {
+    revalidate: 60 * 60 * 2, // two hours,
+  },
+);
+
+export const getSubcategoryProductDetails = unstable_cache(
+  (subcategorySlug: string) =>
+    db
+      .select({ count: count(), name: products.name }) // Get both count and name
+      .from(products)
+      .where(eq(products.subcategory_slug, subcategorySlug)),
+  ["subcategory-product-details"],
   {
     revalidate: 60 * 60 * 2, // two hours,
   },

@@ -6,7 +6,7 @@ import { Metadata } from "next"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 
-import { getProductDetails, getProductsForSubcategory } from "@/lib/queries";
+import { getProductDetails, getProductsForSubcategoryLimited } from "@/lib/queries";
 
 export async function generateMetadata(props: {
   params: Promise<{ product: string; category: string; subcategory: string }>;
@@ -39,7 +39,7 @@ export default async function Page(props: {
   const urlDecodedSubcategory = decodeURIComponent(subcategory);
   const [productData, relatedUnshifted] = await Promise.all([
     getProductDetails(urlDecodedProduct),
-    getProductsForSubcategory(urlDecodedSubcategory),
+    getProductsForSubcategoryLimited(urlDecodedSubcategory),
   ]);
 
   if (!productData) {
@@ -89,11 +89,11 @@ export default async function Page(props: {
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {related?.map((product) => (
-            <Card key={product.name}>
+            <Card key={product.slug}>
               <CardContent className="p-4">
                 <ProductLink
-                  key={product.slug}
-                  loading="lazy"
+                  priority={true}
+                  loading="eager"
                   category_slug={category}
                   subcategory_slug={subcategory}
                   product={product}
