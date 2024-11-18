@@ -1,21 +1,18 @@
+import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
-export async function GET(request: Request) {
-  // dump all the request headers, cookies, and body, infinite deep json stringify
-  const stringifyHeaders = JSON.stringify(
-    Object.fromEntries(request.headers),
-    null,
-    2,
-  );
-  const cookieStore = (await cookies()).getAll();
-  const stringifyCookies = JSON.stringify(cookieStore, null, 2);
+export async function GET(request: NextRequest) {
+  // Dump all the request headers and cookies
+  const headers = Object.fromEntries(request.headers.entries());
+  const allCookies = (await cookies()).getAll();
 
-  console.log("headers", stringifyHeaders);
-  console.log("cookies", stringifyCookies);
+  console.log("headers", headers);
+  console.log("cookies", allCookies);
+
   const responseObj = {
-    headers: stringifyHeaders,
-    cookies: stringifyCookies,
+    headers,
+    cookies: allCookies,
   };
 
-  return Response.json(responseObj);
+  return NextResponse.json(responseObj);
 }
