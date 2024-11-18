@@ -31,6 +31,7 @@ export default async function CollectionPage(props: {
                   <CardContent className="p-6">
                     <Link
                       prefetch={true}
+                      key={category.slug}
                       className="flex flex-col items-center text-center"
                       href={`/products/${category.slug}`}
                     >

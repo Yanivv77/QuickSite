@@ -42,6 +42,7 @@ function CartItem({ product }: { product: CartItem }) {
         </div>
         <div>
           <Link
+            prefetch={true}
             href={`/products/${product.subcategory.subcollection.category_slug}/${product.subcategory.slug}/${product.slug}`}
             className="font-semibold hover:underline"
           >

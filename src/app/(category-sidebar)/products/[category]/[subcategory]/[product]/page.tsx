@@ -7,7 +7,7 @@ import { AddToCartForm } from "@/components/add-to-cart-form"
 import { Metadata } from "next"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import Link from "next/link"
+
 import { ChevronLeft } from 'lucide-react'
 import {
   Breadcrumb,

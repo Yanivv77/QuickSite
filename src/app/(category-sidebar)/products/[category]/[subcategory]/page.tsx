@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation"
-import Link from "next/link"
 import { ProductLink } from "@/components/ui/product-card"
 import type { Metadata } from "next"
 import {

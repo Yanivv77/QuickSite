@@ -8,7 +8,7 @@ import {
   SidebarMenu,
   SidebarMobile
 } from "@/components/ui/sidebar";
-import Link from "next/link";
+import { Link } from "@/components/ui/link";
 import { getCollections } from "@/lib/queries";
 
 
@@ -28,6 +28,7 @@ export default async function Layout({
               {allCollections.map((collection) => (
                 <SidebarMenuItem key={collection.slug}>
                 <Link
+                key={collection.slug}
                 prefetch={true}
                 href={`/${collection.slug}`}
                 className="block w-full py-1 text-xs text-gray-800 hover:bg-accent2 hover:underline"
@@ -47,6 +48,7 @@ export default async function Layout({
               {allCollections.map((collection) => (
                 <SidebarMenuItem key={collection.slug}>
                   <Link 
+                  key={collection.slug}
                   prefetch={true}
                   href={`/${collection.slug}`} 
                   className="block w-full"

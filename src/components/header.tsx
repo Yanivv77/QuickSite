@@ -1,6 +1,6 @@
-import Link from "next/link";
+import { Link } from "@/components/ui/link";
 import { SearchDropdownComponent } from "@/components/search-dropdown";
-import { MenuIcon, ShoppingCart, User } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import { Suspense } from "react";
 import { Cart } from "@/components/cart";
 import { AuthServer } from "../app/auth.server";
@@ -36,6 +36,7 @@ export function Header() {
           {/* Cart - smaller padding and icon on mobile */}
           <div className="relative">
             <Link
+              prefetch={true}
               href="/order"
               className="inline-flex items-center gap-1 sm:gap-2 rounded-full p-1.5 sm:p-2 text-neutral-600 transition-colors hover:bg-neutral-100"
               aria-label="הזמנה"
