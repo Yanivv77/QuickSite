@@ -5,6 +5,7 @@ import {
   products,
   subcategories,
   subcollections,
+  collections,
   users,
 } from "@/db/schema";
 import { db } from "@/db";
@@ -126,6 +127,14 @@ export const getCollectionDetails = unstable_cache(
   },
 );
 
+export const getCollectionCount = unstable_cache(
+  () => db.select({ count: count() }).from(collections),
+  ["total-collections-count"],
+  {
+    revalidate: 60 * 60 * 2, // two hours,
+  },
+);
+
 export const getProductCount = unstable_cache(
   () => db.select({ count: count() }).from(products),
   ["total-product-count"],
@@ -133,6 +142,7 @@ export const getProductCount = unstable_cache(
     revalidate: 60 * 60 * 2, // two hours,
   },
 );
+
 
 // could be optimized by storing category slug on the products table
 export const getCategoryProductCount = unstable_cache(

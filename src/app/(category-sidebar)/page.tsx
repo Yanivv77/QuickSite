@@ -1,13 +1,12 @@
 import { Footer } from "@/components/footer";
 import Hero from "@/components/hero";
 import { Link } from "@/components/ui/link";
-import { getCollections, getProductCount } from "@/lib/queries";
+import { getCollections } from "@/lib/queries";
 import Image from "next/image";
 
 export default async function Home() {
-  const [collections, productCount] = await Promise.all([
+  const [collections] = await Promise.all([
     getCollections(),
-    getProductCount(),
   ]);
   let imageCount = 0;
 
@@ -17,10 +16,10 @@ export default async function Home() {
       {collections.map((collection) => (
         <section key={collection.name}>
           <h1 className="mb-6 text-2xl font-semibold tracking-tight text-center">
-            {collection.name} {productCount.at(0)?.count.toLocaleString()} מוצרים
+            {collection.name} 
           </h1>
           <div className="flex flex-wrap gap-8 md:gap-16 justify-center pl-4">
-            {collection.categories.map((category) => (
+            {collection.categories.map((category,categoryIndex) => (
               <Link
                 prefetch={true}
                 key={category.slug}
@@ -29,7 +28,7 @@ export default async function Home() {
               >
                 <div className="h-[100px] w-[100x] sm:h-[200px] sm:w-[200px] rounded-lg border bg-muted">
                   <Image
-                    loading={imageCount++ < 8 ? "eager" : "lazy"}
+                    loading={categoryIndex < 8 ? "eager" : "lazy"}
                     decoding="sync"
                     src={category.image_url ?? "/placeholder.svg"}
                     alt={category.slug}

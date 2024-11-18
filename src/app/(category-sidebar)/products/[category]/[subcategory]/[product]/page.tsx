@@ -57,13 +57,14 @@ export default async function Page(props: {
       <div className="container mx-auto px-4 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2  mb-12 justify-items-center">
             <Image
+              priority={true}
               loading="eager"
               decoding="sync"
               src={productData.image_url ?? "/placeholder.svg?height=600&width=600"}
               alt={productData.name}
               quality={65}
-              width={400}
-              height={500}
+              width={300}
+              height={400}
               className="rounded-lg"
             />
           
