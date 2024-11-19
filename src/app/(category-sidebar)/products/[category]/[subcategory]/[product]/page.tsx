@@ -122,7 +122,7 @@ export default async function Page(props: {
         <Separator className="my-12" />
 
         <h2 className="text-2xl font-bold text-foreground mb-6">
-          מוצרים קשורים
+          ספרים קשורים
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {related?.map((product) => (

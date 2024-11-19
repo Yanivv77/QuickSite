@@ -32,7 +32,7 @@ export async function generateMetadata(props: {
   }
 
   const description = rows[0]?.count
-    ? `בחר מתוך ${rows[0]?.count - 1} מוצרים ב${subcategory.name}. במלאי ומוכן למשלוח.`
+    ? `בחר מתוך ${rows[0]?.count - 1} ספרים ב${subcategory.name}. במלאי ומוכן למשלוח.`
     : undefined
 
   return {
@@ -90,7 +90,7 @@ export default async function Page(props: {
           {subcategoryData.name}{' '}
           {finalCount > 0 && (
             <span className="text-xl font-medium text-muted-foreground">
-              ({finalCount} {finalCount === 1 ? "מוצר" : "מוצרים"})
+              ({finalCount} {finalCount === 1 ? "ספר" : "ספרים"})
             </span>
           )}
         </h1>
@@ -109,7 +109,7 @@ export default async function Page(props: {
             ))}
           </div>
         ) : (
-          <p className="text-center text-muted-foreground">אין מוצרים בקטגוריה זו</p>
+          <p className="text-center text-muted-foreground">אין ספרים בקטגוריה זו</p>
         )}
       </div>
     </div>

@@ -52,7 +52,7 @@ export default async function Page(props: {
         {cat.name}{' '}
         {typeof finalCount === 'number' && (
           <span className="ml-3 text-lg font-medium text-gray-600">
-            ({finalCount} {finalCount === 1 ? "מוצר" : "מוצרים"})
+            ({finalCount} {finalCount === 1 ? "ספר" : "ספרים"})
           </span>
         )}
       </h1>

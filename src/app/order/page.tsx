@@ -31,7 +31,7 @@ export default async function Page() {
                   <CardContent className="p-6">
                     <h2 className="mb-4 text-xl font-semibold">סיכום הזמנה</h2>
                     <div className="flex justify-between">
-                      <p className="font-medium">סה"כ מוצרים:</p>
+                      <p className="font-medium">סה"כ ספרים:</p>
                       <Suspense fallback={<div>טוען...</div>}>
                         <TotalCost />
                       </Suspense>
