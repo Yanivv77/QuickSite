@@ -52,7 +52,7 @@ export default async function Page(props: {
         {cat.name}{' '}
         {typeof finalCount === 'number' && (
           <span className="ml-3 text-lg font-medium text-gray-600">
-            ({finalCount} {finalCount === 1 ? "ספר" : "ספרים"})
+            ({finalCount} {finalCount === 1 ? "מוצר" : "מוצרים"})
           </span>
         )}
       </h1>
@@ -76,8 +76,8 @@ export default async function Page(props: {
                       decoding="sync"
                       src={subcategory.image_url ?? "/placeholder.svg"}
                       alt={subcategory.name}
-                      width={300}
-                      height={300}
+                      width={200}
+                      height={200}
                       quality={65}
                      className="h-full w-full flex-shrink-0 object-cover transition-transform duration-300 group-hover:scale-105"
                     />

@@ -3,8 +3,7 @@ import NextImage from "next/image";
 import { getImageProps } from "next/image";
 import { Product } from "@/db/schema";
 import { useEffect } from "react";
-import { Link } from "@/components/ui/link";
-
+import Link from "next/link";
 
 export function getProductLinkImageProps(
   imageUrl: string,
@@ -41,7 +40,6 @@ export function ProductLink(props: {
     try {
       const iprops = prefetchProps.props;
       const img = new Image();
-      img.fetchPriority = "low";
       img.decoding = "async";
       if (iprops.sizes) img.sizes = iprops.sizes;
       if (iprops.srcSet) img.srcset = iprops.srcSet;
@@ -50,7 +48,7 @@ export function ProductLink(props: {
       console.error("failed to preload", prefetchProps.props.src, e);
     }
   }, [prefetchProps]);
-  
+
   return (
     <Link
       prefetch={true}
@@ -58,20 +56,20 @@ export function ProductLink(props: {
       href={`/products/${category_slug}/${subcategory_slug}/${product.slug}`}
     >
       <div 
-        className="aspect-[2/3] overflow-hidden rounded-lg shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md"
+        className="aspect-[3/4] overflow-hidden rounded-lg shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md"
         role="img"
         aria-label={`תמונת הספר ${product.name}`}
       >
-        <NextImage
-          loading={props.loading}
-          decoding="sync"
-          src={imageUrl ?? "/placeholder.svg?height=48&width=48"}
-          alt={`A small picture of ${product.name}`}
-          width={150}
-          height={100}
-          quality={65}
-          className="h-full w-full flex-shrink-0 object-cover transition-transform duration-300 group-hover:scale-105"
-        />
+      <NextImage
+            loading={props.loading}
+            decoding="sync"
+            src={imageUrl ?? "/placeholder.svg?height=48&width=48"}
+            alt={`A small picture of ${product.name}`}
+            width={100}
+            height={150}
+            quality={65}
+            className="w-full flex-shrink-0 object-cover"
+          />
       </div>
       <div className="mt-2 space-y-1 text-right" dir="rtl">
         <h2 className="font-medium text-sm line-clamp-1 text-foreground group-hover:underline">

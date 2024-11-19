@@ -61,10 +61,16 @@ export default async function Page(props: {
   const currentProductIndex = relatedUnshifted.findIndex(
     (p) => p.slug === productData.slug,
   );
+  
+  // Filter out duplicates and the current product
   const related = [
     ...relatedUnshifted.slice(currentProductIndex + 1),
     ...relatedUnshifted.slice(0, currentProductIndex),
-  ];
+  ].filter((product, index, self) => 
+    // Keep only the first occurrence of each slug
+    index === self.findIndex((p) => p.slug === product.slug)
+  );
+
   return (
     <div className="min-h-screen bg-background" dir="rtl">
       <div className="container mx-auto px-4 py-16">
@@ -93,6 +99,7 @@ export default async function Page(props: {
         </Breadcrumb>
 
         <div className="grid grid-cols-1 md:grid-cols-2 mb-12 justify-items-center">
+          
             <Image
               priority={true}
               loading="eager"
@@ -100,9 +107,9 @@ export default async function Page(props: {
               src={productData.image_url ?? "/placeholder.svg?height=600&width=600"}
               alt={productData.name}
               quality={65}
-              width={300}
-              height={400}
-              className="rounded-lg"
+              width={150}
+              height={200}
+              className="w-1/2 flex-shrink-0 object-cover"
             />
           
           <div className="flex flex-col justify-center">
@@ -122,7 +129,7 @@ export default async function Page(props: {
         <Separator className="my-12" />
 
         <h2 className="text-2xl font-bold text-foreground mb-6">
-          ספרים קשורים
+          מוצרים קשורים
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {related?.map((product) => (

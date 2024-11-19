@@ -21,8 +21,6 @@ function ProductDisplay({ products }: { products: any[] }) {
             product={product}
             imageUrl={product.image_url}
             loading="eager"
-            priority={true}
-            isHero={true}
           />
         </div>
       ))}
