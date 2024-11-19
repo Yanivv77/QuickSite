@@ -3,14 +3,14 @@ export function LoginForm() {
     <div className="flex flex-col gap-4">
       <input
         type="email"
-        placeholder="Email"
+        placeholder="אימייל"
         className="w-full border border-black p-2 pr-16 outline-none"
         disabled
       />
       <div className="relative">
         <input
           type="password"
-          placeholder="Password"
+          placeholder="סיסמה"
           className="w-full border border-black p-2 pr-16 outline-none"
           disabled
         />

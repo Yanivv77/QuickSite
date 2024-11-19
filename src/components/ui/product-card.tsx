@@ -10,8 +10,8 @@ export function getProductLinkImageProps(
   productName: string,
 ) {
   return getImageProps({
-    width: 100,
-    height: 150,
+    width: 200,
+    height: 300,
     quality: 65,
     src: imageUrl,
     alt: `A small picture of ${productName}`,
@@ -29,9 +29,9 @@ export function ProductLink(props: {
 
   // Prefetch the main image for the product page
   const prefetchProps = getImageProps({
-    height: 150,
+    height: 300,
     quality: 80,
-    width: 100,
+    width: 200,
     src: imageUrl ?? "/placeholder.svg?height=64&width=64",
     alt: `A small picture of ${product.name}`,
   });
@@ -65,8 +65,8 @@ export function ProductLink(props: {
             decoding="sync"
             src={imageUrl ?? "/placeholder.svg?height=48&width=48"}
             alt={`A small picture of ${product.name}`}
-            width={100}
-            height={150}
+            width={200}
+            height={300}
             quality={65}
             className="w-full flex-shrink-0 object-cover"
           />

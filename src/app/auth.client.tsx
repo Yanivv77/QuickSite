@@ -60,7 +60,7 @@ export function LoginForm() {
                   required
                   maxLength={100}
                   className="relative block w-full appearance-none rounded-[1px] border px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-orange-500 focus:outline-none focus:ring-orange-500 sm:text-sm"
-                  placeholder="Password"
+                  placeholder="סיסמה"
                 />
               </div>
             </div>

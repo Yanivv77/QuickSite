@@ -22,7 +22,6 @@ async function prefetchImages(href: string) {
   }
   const url = new URL(href, window.location.href);
   const imageResponse = await fetch(`/api/prefetch-images${url.pathname}`, {
-    priority: "low",
   });
   // only throw in dev
   if (!imageResponse.ok && process.env.NODE_ENV === "development") {
@@ -50,26 +49,19 @@ export const Link: typeof NextLink = (({ children, ...props }) => {
     if (!linkElement) return;
 
     const observer = new IntersectionObserver(
-      (entries) => {
+      async (entries) => {
         const entry = entries[0];
         if (entry.isIntersecting) {
-          // Set a timeout to trigger prefetch after 1 second
-          prefetchTimeout = setTimeout(async () => {
-            router.prefetch(String(props.href));
-            await sleep(0); // We want the doc prefetches to happen first.
-            void prefetchImages(String(props.href)).then((images) => {
-              setImages(images);
-            }, console.error);
-            // Stop observing once images are prefetched
-            observer.unobserve(entry.target);
-          }, 200); // 300ms delay
+          router.prefetch(String(props.href));
+          await sleep(0);
+          prefetchImages(String(props.href)).then(setImages, console.error);
+          observer.unobserve(entry.target);
         } else if (prefetchTimeout) {
-          // If the element leaves the viewport before 1 second, cancel the prefetch
           clearTimeout(prefetchTimeout);
           prefetchTimeout = null;
         }
       },
-      { rootMargin: "0px", threshold: 0.1 }, // Trigger when at least 10% is visible
+      { rootMargin: "0px", threshold: 0.0 }, // Trigger when at least 10% is visible
     );
 
     observer.observe(linkElement);
@@ -88,7 +80,6 @@ export const Link: typeof NextLink = (({ children, ...props }) => {
       prefetch={false}
       onMouseEnter={() => {
         router.prefetch(String(props.href));
-        if (preloading.length) return;
         const p: (() => void)[] = [];
         for (const image of images) {
           const remove = prefetchImage(image);
@@ -129,7 +120,7 @@ function prefetchImage(image: PrefetchImage) {
   }
   const img = new Image();
   img.decoding = "async";
-  img.fetchPriority = "low";
+  img.fetchPriority = "high";
   img.sizes = image.sizes;
   seen.add(image.srcset);
   img.srcset = image.srcset;
