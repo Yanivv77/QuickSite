@@ -9,19 +9,13 @@ import { Link } from "@/components/ui/link";
 export function getProductLinkImageProps(
   imageUrl: string,
   productName: string,
-  isHero?: boolean
 ) {
   return getImageProps({
-    width: isHero ? 300 : 200,
-    height: isHero ? 450 : 300,
-    quality: isHero ? 75 : 60,
+    width: 100,
+    height: 150,
+    quality: 65,
     src: imageUrl,
-    alt: `תמונת הספר ${productName}`,
-    sizes: isHero 
-      ? "(max-width: 640px) 80vw, (max-width: 768px) 45vw, 300px"
-      : "(max-width: 640px) 45vw, (max-width: 768px) 30vw, 200px",
-    loading: "eager",
-    priority: true,
+    alt: `A small picture of ${productName}`,
   });
 }
 
@@ -30,27 +24,24 @@ export function ProductLink(props: {
   category_slug: string;
   subcategory_slug: string;
   loading: "eager" | "lazy";
-  priority?: boolean;
-  isHero?: boolean;
   product: Product;
 }) {
   const { category_slug, subcategory_slug, product, imageUrl } = props;
 
   // Prefetch the main image for the product page
   const prefetchProps = getImageProps({
-    width: 200,
-    height: 300,
-    quality: 60,
-    src: imageUrl ?? "/placeholder.svg",
-    alt: `תמונת הספר ${product.name}`,
-    sizes: "(max-width: 768px) 50vw, 200px",
+    height: 150,
+    quality: 80,
+    width: 100,
+    src: imageUrl ?? "/placeholder.svg?height=64&width=64",
+    alt: `A small picture of ${product.name}`,
   });
 
   useEffect(() => {
     try {
       const iprops = prefetchProps.props;
       const img = new Image();
-      img.fetchPriority = "high";
+      img.fetchPriority = "low";
       img.decoding = "async";
       if (iprops.sizes) img.sizes = iprops.sizes;
       if (iprops.srcSet) img.srcset = iprops.srcSet;
@@ -59,7 +50,7 @@ export function ProductLink(props: {
       console.error("failed to preload", prefetchProps.props.src, e);
     }
   }, [prefetchProps]);
-
+  
   return (
     <Link
       prefetch={true}
@@ -72,20 +63,13 @@ export function ProductLink(props: {
         aria-label={`תמונת הספר ${product.name}`}
       >
         <NextImage
-          {...getProductLinkImageProps(
-            imageUrl ?? "/placeholder.svg",
-            product.name,
-            props.isHero
-          )}
           loading={props.loading}
           decoding="sync"
-          fetchPriority={"high"}
-          priority={props.isHero ? true : props.priority}
-          src={imageUrl ?? "/placeholder.svg"}
-          alt={`תמונת הספר ${product.name}`}
+          src={imageUrl ?? "/placeholder.svg?height=48&width=48"}
+          alt={`A small picture of ${product.name}`}
           width={150}
-          height={200}
-          quality={60}
+          height={100}
+          quality={65}
           className="h-full w-full flex-shrink-0 object-cover transition-transform duration-300 group-hover:scale-105"
         />
       </div>

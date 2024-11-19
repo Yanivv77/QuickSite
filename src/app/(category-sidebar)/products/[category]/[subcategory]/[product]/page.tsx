@@ -129,7 +129,6 @@ export default async function Page(props: {
             <Card key={product.slug}>
               <CardContent className="p-4">
                 <ProductLink
-                  priority={true}
                   loading="eager"
                   category_slug={category}
                   subcategory_slug={subcategory}
