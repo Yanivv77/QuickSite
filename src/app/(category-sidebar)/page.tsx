@@ -24,9 +24,9 @@ export default async function Home() {
                 prefetch={true}
                 key={category.slug}
                 href={`/products/${category.slug}`}
-                className="group relative overflow-hidden"
+                className="group relative overflow-hidden w-[120px] sm:w-auto"
               >
-                <div className="h-[100px] w-[100x] sm:h-[200px] sm:w-[200px] rounded-lg border bg-muted">
+                 <div className="h-[100px] w-[100x] sm:h-[200px] sm:w-[200px] rounded-lg border bg-muted">
                   <Image
                     loading={categoryIndex < 8 ? "eager" : "lazy"}
                     decoding="sync"
@@ -34,13 +34,16 @@ export default async function Home() {
                     alt={category.slug}
                     width={200}
                     height={200}
-                    className="h-full w-full flex-shrink-0 object-cover transition-transform duration-300 group-hover:scale-105"
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                     quality={65}
-                    sizes="(max-width: 640px) 100px, 200px"
                   />
                 </div>
                 <div className="mt-2">
-                  <h2 className="font-medium text-center">{category.name}</h2>
+                  <h2
+                    className="font-medium text-center text-sm line-clamp-2"
+                  >
+                    {category.name}
+                  </h2>
                 </div>
               </Link>
             ))}
