@@ -10,14 +10,15 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-    minimumCacheTTL: 31536000,
+    unoptimized: false,
+    minimumCacheTTL: 2592000,
+    formats: ['image/webp'],
+    domains: ['ia3xwttgsoyoaa0n.public.blob.vercel-storage.com'],
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "ia3xwttgsoyoaa0n.public.blob.vercel-storage.com",
-        port: "",
-        pathname: "/**",
-        search: "",
+        protocol: 'https',
+        hostname: 'ia3xwttgsoyoaa0n.public.blob.vercel-storage.com',
+        pathname: '/products/**',
       },
     ],
   },
