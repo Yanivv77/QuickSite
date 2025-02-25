@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Link } from "@/components/ui/link";
 import { notFound } from "next/navigation";
-import { getCategory, getCategoryProductCount } from "@/lib/queries";
+import { getCategory, getCategoryProductCount, getCategoryWithProducts } from "@/lib/queries";
 import { db } from "@/db";
 import { categories } from "@/db/schema";
 import {
@@ -24,7 +24,7 @@ export default async function Page(props: {
 }) {
   const { category } = await props.params;
   const urlDecoded = decodeURIComponent(category);
-  const cat = await getCategory(urlDecoded);
+  const cat = await getCategoryWithProducts(urlDecoded);
   let imageCount = 0;
 
   if (!cat) {

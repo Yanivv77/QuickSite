@@ -107,6 +107,67 @@ export const getSubcategory = unstable_cache(
   },
 );
 
+export const getCategoryWithProducts = unstable_cache(
+  async (categorySlug: string) => {
+    // Get the category with all subcollections and subcategories
+    const category = await db.query.categories.findFirst({
+      where: (categories, { eq }) => eq(categories.slug, categorySlug),
+      with: {
+        subcollections: {
+          with: {
+            subcategories: true,
+          },
+        },
+      },
+    });
+    
+    if (!category) return null;
+    
+    // Get all subcategories that have products
+    const subcategoriesWithProducts = await db
+      .select({ slug: subcategories.slug })
+      .from(subcategories)
+      .innerJoin(
+        products,
+        sql`${products.subcategory_slug} = ${subcategories.slug}`
+      )
+      .where(sql`${subcategories.subcollection_id} IN (
+        SELECT id FROM subcollections 
+        WHERE category_slug = ${categorySlug}
+      )`)
+      .groupBy(subcategories.slug);
+    
+    // Create a Set of subcategory slugs that have products for fast lookup
+    const validSubcategorySlugs = new Set(
+      subcategoriesWithProducts.map(sc => sc.slug)
+    );
+    
+    // Filter the category data to include only subcollections with valid subcategories
+    const filteredCategory = {
+      ...category,
+      subcollections: category.subcollections
+        .map(subcol => ({
+          ...subcol,
+          subcategories: subcol.subcategories.filter(
+            subcat => validSubcategorySlugs.has(subcat.slug)
+          )
+        }))
+        .filter(subcol => subcol.subcategories.length > 0)
+    };
+    
+    // If there are no subcollections with products, return null
+    if (filteredCategory.subcollections.length === 0) {
+      return null;
+    }
+    
+    return filteredCategory;
+  },
+  ["category-with-products"],
+  {
+    revalidate: 60 * 60 * 2, // two hours
+  }
+);
+
 export const getCategory = unstable_cache(
   (categorySlug: string) =>
     db.query.categories.findFirst({
